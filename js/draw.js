@@ -1,0 +1,756 @@
+/* draw.js
+   Contém toda a lógica original do sorteio e do comportamento do mapa.
+   Encapsulado em window.Sorteio.init() para inicializar após DOM estar pronto.
+*/
+
+(function (window, document) {
+    'use strict';
+
+    // Expondo namespace protegido
+    window.Sorteio = window.Sorteio || {};
+
+    window.Sorteio.init = function() {
+        // === Copiado e adaptado do script original, sem alterações lógicas ===
+        // ====================================================
+        // VARIÁVEIS DE CONFIGURAÇÃO E CONSTANTES
+        // ====================================================
+        var teamColors = ['Azul', 'Vermelho', 'Preto', 'Amarelo'];
+        var colorMap = {
+            'Azul': '#2A3EFE',
+            'Vermelho': '#E73B3B',
+            'Preto': '#000000',
+            'Amarelo': '#FFD02B'
+        };
+        var SHIELD_SVGS = [
+            '<path d="M60,0S35.33,12.13,0,14.25v67.44c0,26.6,24.25,57.24,60,68.3,35.75-11.06,60-41.7,60-68.3V14.25C84.67,12.13,60,0,60,0Z"/>', 
+            '<path d="M55,0S17.55,0,0,9.19v97.9c0,35.41,49.16,26.85,55,42.91,5.84-16.06,55-7.5,55-42.91V9.19C92.45,0,55,0,55,0Z"/>', 
+            '<circle cx="75" cy="75" r="75"/>', 
+            '<path d="M104.39,0l-39.39,10.85L25.61,0,0,34.14s13.73,16.4,13.73,49.42c0,46.36,51.27,66.44,51.27,66.44,0,0,51.27-20.08,51.27-66.44,0-33.02,13.73-49.42,13.73-49.42L104.39,0Z"/>', 
+            '<polygon points="60 0 0 75 60 150 120 75 60 0"/>', 
+            '<path d="M60,0L0,41.98s6.11,30.88,10.32,51.09c7.78,37.31,39.18,46.43,49.68,56.93,10.5-10.5,41.89-19.62,49.68-56.93,4.22-20.21,10.32-51.09,10.32-51.09L60,0Z"/>' 
+        ];
+        
+        // Dados de Endereços Salvos
+        var savedAddresses = [
+            { 
+                name: "Arena Society", 
+                address: "R. Alfredo José Athaíde - Alto do Céu, João Pessoa", 
+                mapLink: "https://www.google.com/maps/place/Campo+Society/@-7.0979558,-34.8653826,2171m/data=!3m1!1e3!4m6!3m5!1s0x7ace700624b6665:0xb94abc68788cdb98!8m2!3d-7.0979818!4d-34.8652132!16s%2Fg%2F11yh_3c94n?authuser=0&entry=ttu&g_ep=EgoyMDI1MTAxMy4wIKXMDSoASAFQAw%3D%3D",
+                imageURL: "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nr0kNntXaE_JUcYw3L6w2wSyIA2veZBcoqJClBPv3SbDJNnGa6ETZ9ml0K9fPDTMSXAlOn6GHNrGsSQttEZX6GGAhBl-Q5_Guxr9A20xuZeWzqFxug6TTa619Onf2o9ajhSN-GX5YbgKVs=s1024-v1"
+            },
+            { 
+                name: "Open Arena", 
+                address: "Rua Dr. San Juan, 193 - Estados, João Pessoa", 
+                mapLink: "https://www.google.com/maps/place/Open+Arena/@-7.1099195,-34.8592484,1086m/data=!3m2!1e3!4b1!4m6!3m5!1s0x7acddec175bc31b:0xbb6e239fe09972c7!8m2!3d-7.1099248!4d-34.8566735!16s%2Fg%2F11t0w6bw5n?authuser=0&entry=ttu&g_ep=EgoyMDI1MTAxMy4wIKXMDSoASAFQAw%3D%3D",
+                imageURL: "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?cb_client=maps_sv.tactile&w=900&h=600&pitch=2.944694354568554&panoid=bbfJ69cJrzICtqjpqNiLIA&yaw=208.1746396666018"
+            },
+            { 
+                name: "Vila Olímpica Parahyba", 
+                address: "R. Desportista Aurélio Rocha, S/N - Estados, João Pessoa", 
+                mapLink: "https://www.google.com/maps/place/Vila+Ol%C3%ADmpica+Parahyba/@-7.1115,-34.8521945,1086m/data=!3m2!1e3!4b1!4m6!3m5!1s0x7acdd44b95e2113:0x2c23407e7fc3d4a3!8m2!3d-7.1115053!4d-34.8496196!16s%2Fg%2F11b76h74q6?authuser=0&entry=ttu&g_ep=EgoyMDI1MTAxMy4wIKXMDSoASAFQAw%3D%3D",
+                imageURL: "https://www.google.com/maps/place/Vila+Ol%C3%ADmpica+Parahyba/@-7.1115053,-34.8496196,1086m/data=!3m1!1e3!4m6!3m5!1s0x7acdd44b95e2113:0x2c23407e7fc3d4a3!8m2!3d-7.1115053!4d-34.8496196!16s%2Fg%2F11b76h74q6?authuser=0&entry=ttu&g_ep=EgoyMDI1MTAxMy4wIKXMDSoASAFQAw%3D%3D"
+            },
+        ];
+        
+        // ====================================================
+        // REFERÊNCIAS AO DOM
+        // ====================================================
+        var playersTextarea = document.getElementById('players-textarea');
+        var drawBtn = document.getElementById('draw-btn');
+        var clearBtn = document.getElementById('clear-btn');
+        var resultsDiv = document.getElementById('results');
+        var playerCountStats = document.getElementById('player-count-stats');
+        var avgAgeStats = document.getElementById('avg-age-stats');
+        
+        // Elementos do Mapa/Data
+        var dateInput = document.getElementById('date-input'); 
+        var timeInput = document.getElementById('time-input'); 
+        var addressInput = document.getElementById('address-input');
+        var openMapBtn = document.getElementById('open-map-btn');
+        var customDropdown = document.getElementById('custom-address-dropdown'); 
+        var mapImageContainer = document.getElementById('map-image-container'); 
+        var mapImage = document.getElementById('map-image'); 
+        var dayOfWeekDisplay = document.getElementById('day-of-week-display'); 
+
+        const initialPlaceholder = playersTextarea.placeholder;
+        
+        // ====================================================
+        // FUNÇÕES DE UTILIDADE
+        // ====================================================
+        
+        /** Embaralha um array (Algoritmo Fisher-Yates). */
+        function shuffleArray(array) {
+            for (var i = array.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var tmp = array[i];
+                array[i] = array[j];
+                array[j] = tmp;
+            }
+            return array;
+        }
+
+        function updateTextareaValue(value) {
+            playersTextarea.value = value;
+            if (value === initialPlaceholder) {
+                playersTextarea.classList.add('initial-placeholder');
+            } else {
+                playersTextarea.classList.remove('initial-placeholder');
+            }
+            updateStats();
+        }
+
+        function parsePlayers() {
+            const valueToParse = playersTextarea.value === initialPlaceholder ? '' : playersTextarea.value;
+            const lines = valueToParse.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            const players = [];
+            for (const line of lines) {
+                const parts = line.split(',').map(part => part.trim());
+                const name = parts[0];
+                const age = parseInt(parts[1]);
+                const isGoalie = parts.length > 2 && parts[2].toUpperCase() === 'G';
+                if (name && !isNaN(age) && age > 0) {
+                    players.push({ name, age, isGoalie });
+                }
+            }
+            return players;
+        }
+
+        /** Calcula e exibe as estatísticas dos jogadores. */
+        function updateStats() {
+            var players = parsePlayers();
+            var totalPlayers = players.length;
+            var totalGoalies = players.filter(function(p){ return p.isGoalie; }).length;
+            
+            var avgAge = 'N/A';
+            if (totalPlayers > 0) {
+                var totalAge = players.reduce(function(sum, p){ return sum + p.age; }, 0);
+                avgAge = (totalAge / totalPlayers).toFixed(1);
+            }
+
+            playerCountStats.innerHTML = '<strong>' + totalPlayers + '</strong> Jogadores • <strong>' + totalGoalies + '</strong> Goleiros';
+            avgAgeStats.innerHTML = 'Idade Média: <strong>' + avgAge + '</strong>';
+        }
+
+        // ====================================================
+        // FUNÇÕES DE DATA/HORA
+        // ====================================================
+        
+        /** Calcula e exibe o dia da semana a partir da string DD/MM. */
+        function updateDayOfWeek(dateString) {
+            var parts = dateString.split('/');
+            if (parts.length === 2 && parts[0].length === 2 && parts[1].length === 2) {
+                var day = parseInt(parts[0], 10);
+                var month = parseInt(parts[1], 10);
+                var currentYear = new Date().getFullYear(); 
+                var date = new Date(currentYear, month - 1, day);
+
+                if (date.getDate() === day && date.getMonth() === month - 1) {
+                    var formatter = new Intl.DateTimeFormat('pt-BR', { weekday: 'long' });
+                    var dayName = formatter.format(date);
+                    dayName = dayName.charAt(0).toUpperCase() + dayName.slice(1) + ',';
+                    dayOfWeekDisplay.textContent = dayName;
+                    dayOfWeekDisplay.style.display = 'inline'; 
+                    dateInput.style.color = '#ECEDEF'; 
+                } else {
+                    dayOfWeekDisplay.textContent = 'Data Inválida,';
+                    dayOfWeekDisplay.style.display = 'inline';
+                    dateInput.style.color = '#E73B3B';
+                }
+            } else if (dateString.length > 0) {
+                dayOfWeekDisplay.textContent = 'Dia,';
+                dayOfWeekDisplay.style.display = 'inline';
+                dateInput.style.color = '#ECEDEF'; 
+            } else {
+                dayOfWeekDisplay.textContent = '';
+                dayOfWeekDisplay.style.display = 'none';
+                dateInput.style.color = '#ECEDEF'; 
+            }
+        }
+        
+        /** Formata o input (DD/MM ou HH:MM) e salva no localStorage. */
+        function formatInput(inputElement, formatSeparator) {
+            var rawValue = inputElement.value.replace(/\D/g, '').substring(0, 4); 
+            var formattedValue = '';
+            
+            var part1 = rawValue.substring(0, 2);
+            var part2 = rawValue.substring(2, 4);
+
+            if (part1.length === 2) {
+                var num1 = parseInt(part1, 10);
+                
+                if (formatSeparator === '/') { // Data (DD)
+                    if (num1 > 31) part1 = '31';
+                    if (part1 === '00') part1 = '01'; 
+                } else if (formatSeparator === ':') { // Hora (HH)
+                    if (num1 > 23) part1 = '23';
+                }
+            }
+            
+            formattedValue += part1;
+
+            if (part2.length > 0) {
+                formattedValue += formatSeparator;
+                var num2 = parseInt(part2, 10);
+                
+                if (formatSeparator === '/') { // Data (MM - Mês)
+                    if (num2 > 12) part2 = '12';
+                    if (part2 === '00') part2 = '01'; 
+                } else if (formatSeparator === ':') { // Hora (MM - Minuto)
+                    if (num2 > 59) part2 = '59';
+                }
+                
+                formattedValue += part2;
+            }
+            
+            inputElement.value = formattedValue;
+            try {
+                localStorage.setItem(inputElement.id === 'date-input' ? 'matchDate' : 'matchTime', formattedValue);
+            } catch (e) {
+                // localStorage pode falhar em modos especiais do navegador; ignorar silenciosamente
+            }
+            
+            if (inputElement.id === 'date-input') {
+                updateDayOfWeek(formattedValue);
+            }
+        }
+
+        // ====================================================
+        // FUNÇÕES DE MAPA/ENDEREÇO
+        // ====================================================
+
+        /** Obtém as cores do avatar com base na cor do time (para garantir contraste). */
+        function getAvatarColors(teamColorHex) {
+            var avatarBgColor = teamColorHex;
+            var avatarTextColor = '#ECEDEF'; 
+
+            if (teamColorHex === '#000000') { // Preto
+                avatarBgColor = '#ECEDEF'; 
+                avatarTextColor = '#0B0E0F'; 
+            } else if (teamColorHex === '#FFD02B') { // Amarelo
+                avatarTextColor = '#000000'; 
+            }
+            return { avatarBgColor: avatarBgColor, avatarTextColor: avatarTextColor };
+        }
+        
+        /** Atualiza o texto do botão do mapa e o estado da imagem de visualização. */
+        function updateMapButtonState() {
+            var mapLink = addressInput.dataset.selectedLink;
+            var imageURL = addressInput.dataset.selectedImage; 
+            var selectedName = addressInput.dataset.selectedName || 'Local';
+            
+            openMapBtn.disabled = !mapLink;
+            
+            if (!mapLink) {
+                openMapBtn.textContent = 'Abrir no Google Maps';
+                mapImageContainer.style.display = 'none';
+                mapImage.style.opacity = '0';
+            } else {
+                openMapBtn.textContent = 'Abrir "' + selectedName + '" no Maps';
+                
+                if (imageURL) {
+                    mapImageContainer.style.display = 'block';
+                    mapImage.style.opacity = '0'; 
+                    var placeholder = mapImageContainer.querySelector('.image-placeholder');
+                    if (placeholder) {
+                        placeholder.style.display = 'flex';
+                        placeholder.textContent = 'Carregando imagem do local...';
+                    }
+                    
+                    mapImage.src = imageURL;
+                    mapImage.onload = function() {
+                        mapImage.style.opacity = '1';
+                        if (placeholder) placeholder.style.display = 'none';
+                    };
+                    mapImage.onerror = function() {
+                        mapImage.src = '';
+                        mapImage.style.opacity = '0';
+                        if (placeholder) {
+                            placeholder.textContent = 'Erro ao carregar a imagem do local. Verifique o link.';
+                            placeholder.style.display = 'flex';
+                        }
+                    };
+                } else {
+                    mapImageContainer.style.display = 'block'; 
+                    mapImage.src = '';
+                    mapImage.style.opacity = '0';
+                    var ph = mapImageContainer.querySelector('.image-placeholder');
+                    if (ph) {
+                        ph.textContent = 'Imagem do local não fornecida.';
+                        ph.style.display = 'flex';
+                    }
+                }
+            }
+        }
+        
+        /** Renderiza o dropdown customizado de endereços. */
+        function filterAndRenderDropdown() {
+            var addressesToDisplay = savedAddresses; 
+            
+            customDropdown.innerHTML = '';
+            
+            if (addressesToDisplay.length > 0 && document.activeElement === addressInput) {
+                
+                addressesToDisplay.forEach(function(item) {
+                    var dropdownItem = document.createElement('div');
+                    dropdownItem.className = 'dropdown-item';
+                    dropdownItem.tabIndex = 0; 
+                    
+                    dropdownItem.innerHTML = '\n                        <span style="color: #ECEDEF; font-weight: bold; display: block;">' + item.name + '</span>\n                        <span style="color: #858787; font-size: 0.9em; display: block;">' + item.address + '</span>\n                    ';
+                    
+                    dropdownItem.addEventListener('click', function() {
+                        addressInput.value = item.name; 
+                        addressInput.dataset.selectedAddress = item.address; 
+                        addressInput.dataset.selectedName = item.name;
+                        addressInput.dataset.selectedLink = item.mapLink; 
+                        addressInput.dataset.selectedImage = item.imageURL;
+                        customDropdown.style.display = 'none';
+                        updateMapButtonState(); 
+                        addressInput.blur(); 
+                    });
+                    
+                    customDropdown.appendChild(dropdownItem);
+                });
+                
+                customDropdown.style.display = 'block';
+            } else {
+                customDropdown.style.display = 'none';
+            }
+        }
+
+        // ====================================================
+        // FUNÇÕES DE RENDERIZAÇÃO DO RESULTADO
+        // ====================================================
+        
+        /** Cria o HTML para o marcador de jogador em campo. */
+        function createPlayerMarkerHTML(player, teamColorHex, positionClass) {
+            var colors = getAvatarColors(teamColorHex);
+            var avatarBgColor = colors.avatarBgColor;
+            var avatarTextColor = colors.avatarTextColor;
+            var initial = player.name.charAt(0).toUpperCase();
+            
+            return '\n                <div class="player-marker ' + positionClass + '">\n                    <div class="player-avatar" style="background-color: ' + avatarBgColor + '; color: ' + avatarTextColor + ';">\n                        <span class="initial-letter">' + initial + '</span>\n                    </div>\n                    <span class="player-name">' + player.name + '</span>\n                    <span class="player-age">' + player.age + ' anos</span> \n                </div>\n            ';
+        }
+
+        /** Cria o HTML para o jogador substituto na lista. */
+        function createSubstituteHTML(player, teamColorHex) {
+            var colors = getAvatarColors(teamColorHex);
+            var avatarBgColor = colors.avatarBgColor;
+            var avatarTextColor = colors.avatarTextColor;
+            var initial = player.name.charAt(0).toUpperCase();
+            var goalieText = player.isGoalie ? ' (G)' : '';
+
+            return '\n                <li class="substitute-player">\n                    <div class="player-avatar" style="background-color: ' + avatarBgColor + '; color: ' + avatarTextColor + ';">\n                        <span class="initial-letter">' + initial + '</span>\n                    </div>\n                    <span class="player-name">' + player.name + '</span>\n                    <span class="player-age">' + player.age + ' anos ' + goalieText + '</span>\n                </li>\n            ';
+        }
+
+        /** Cria o HTML completo do card de um time. */
+        function createTeamCardHTML(team, teamColorName, teamColorHex, onFieldPlayersForDisplay, substitutes, shieldSVGPath) {
+            var totalAge = team.reduce(function(sum, p){ return sum + p.age; }, 0);
+            var avgAge = (team.length > 0) ? (totalAge / team.length).toFixed(1) : 'N/A';
+
+            // Mapeamento de posições de campo para 1, 2, 3, 4 ou 5 jogadores de linha
+            var nonGKPositions = {
+                1: [['f0-m1']], 
+                2: [['f2L-d1', 'f2L-d2']], 
+                3: [['f3L-d1', 'f3L-m1', 'f3L-m2']], 
+                4: [['f1-d1', 'f1-d2', 'f1-m1', 'f1-a1'], ['f2-d1', 'f2-m1', 'f2-m2', 'f2-a1'], ['f3-d1', 'f3-m1', 'f3-m2', 'f3-a1']], 
+                5: [['pos-5-d1', 'pos-5-d2', 'pos-5-m1', 'pos-5-a1', 'pos-5-a2']],
+            };
+
+            var fieldPlayerSlots = onFieldPlayersForDisplay.length - onFieldPlayersForDisplay.filter(function(p){ return p.isGoalie; }).length;
+            var positionsToUse = [];
+            
+            if (nonGKPositions[fieldPlayerSlots]) {
+                 var formationOptions = nonGKPositions[fieldPlayerSlots];
+                 positionsToUse = shuffleArray(formationOptions)[0]; 
+            } else {
+                // Fallback para posicionamento centralizado se a contagem não for 1-5.
+                positionsToUse = Array(fieldPlayerSlots).fill(0).map(function(_, i){ return 'pos-a-c-' + i; }); 
+            }
+
+            var availablePositions = shuffleArray(positionsToUse);
+            var fieldPlayerPositionIndex = 0;
+
+            var pitchHTML = '\n                <div class="football-pitch">\n                    <div class="line-top"></div>\n                    <div class="penalty-box"></div>\n                    <div class="six-yard-box"></div>\n                    <div class="penalty-spot"></div>\n                    <div class="center-circle"></div>\n                    <div class="penalty-arc"></div> \n            ';
+            
+            onFieldPlayersForDisplay.forEach(function(player) {
+                var positionClass;
+                if (player.isGoalie) { 
+                    positionClass = 'pos-gk';
+                } else {
+                    if (fieldPlayerPositionIndex < availablePositions.length) {
+                        positionClass = availablePositions[fieldPlayerPositionIndex];
+                        fieldPlayerPositionIndex++;
+                    } else {
+                        positionClass = 'pos-a-c'; // Fallback
+                    }
+                }
+                pitchHTML += createPlayerMarkerHTML(player, teamColorHex, positionClass);
+            });
+            
+            pitchHTML += '</div>';
+
+            var substitutesHTML = substitutes.map(function(p){ return createSubstituteHTML(p, teamColorHex); }).join('');
+
+            return '\n\t\t<div class="team-header">\n\t\t\t<div class="name-and-color">\n\t\t\t\t<svg class="team-shield" viewBox="0 0 150 150" style="fill: ' + teamColorHex + '; stroke: #ECEDEF; stroke-width: 0;">\n\t\t\t\t\t' + shieldSVGPath + '\n\t\t\t\t</svg>\n\t\t\t\t' + teamColorName + '\n\t\t\t</div>\n\t\t\t<div class="info-text">\n                        <strong>' + team.length + ' Jogadores</strong><br>\n                        Idade média: ' + avgAge + ' anos\n                    </div>\n                </div>\n                <div class="pitch-container">\n                    ' + pitchHTML + '\n                </div>\n                <div class="substitutes-section">\n                    <h4>Substituições <span class="count">(' + substitutes.length + ' jogador' + (substitutes.length !== 1 ? 'es' : '') + ')</span></h4>\n                    <ul class="substitutes-list">\n                        ' + substitutesHTML + '\n                    </ul>\n                </div>\n            ';
+        }
+
+        // ====================================================
+        // FUNÇÃO PRINCIPAL DE SORTEIO
+        // ====================================================
+
+        function drawTeams() {
+            var players = parsePlayers();
+            
+            if (players.length < 8) {
+                alert('É necessário ter pelo menos 8 jogadores para o sorteio.');
+                return;
+            }
+
+            resultsDiv.innerHTML = '';
+            
+            var numPlayers = players.length;
+            var numTeams = 0;
+
+            if (numPlayers >= 8 && numPlayers <= 12) {
+                numTeams = 2;
+            } else if (numPlayers >= 13 && numPlayers <= 19) {
+                numTeams = 3;
+            } else if (numPlayers >= 20) {
+                numTeams = 4;
+            } else {
+                 alert('A quantidade de jogadores não é suportada pela lógica atual.');
+                 return;
+            }
+
+            var teams = Array.from({ length: numTeams }, function(){ return []; });
+            var availablePlayers = shuffleArray(players.slice());
+
+            var goalies = availablePlayers.filter(function(p){ return p.isGoalie; });
+            var fieldPlayers = availablePlayers.filter(function(p){ return !p.isGoalie; });
+
+            var oldPlayers = fieldPlayers.filter(function(p){ return p.age > 20; });
+            var teens = fieldPlayers.filter(function(p){ return p.age >= 15 && p.age <= 19; });
+            var kids = fieldPlayers.filter(function(p){ return p.age <= 14; });
+
+            // 1. Sorteio de Goleiros
+            shuffleArray(goalies);
+            for (var gi = 0; gi < goalies.length && gi < numTeams; gi++) {
+                teams[gi].push(goalies[gi]);
+            }
+            
+            // 2. Equilíbrio de Experiência
+            var teamsWithGoalieOver20 = teams.map(function(team){ return team.some(function(p){ return p.isGoalie && p.age > 20; }); });
+            var remainingOldPlayers = [];
+            var teamIndex = 0;
+
+            var shuffledOld = shuffleArray(oldPlayers.slice());
+            for (var oi = 0; oi < shuffledOld.length; oi++) {
+                var player = shuffledOld[oi];
+                var startIndex = teamIndex;
+                var placed = false;
+                while (!placed) {
+                    if (!teamsWithGoalieOver20[teamIndex]) {
+                        teams[teamIndex].push(player);
+                        placed = true;
+                    } else {
+                        teamIndex = (teamIndex + 1) % numTeams;
+                        if (teamIndex === startIndex) { 
+                            remainingOldPlayers.push(player);
+                            placed = true;
+                        }
+                    }
+                }
+                if (placed) {
+                     teamIndex = (teamIndex + 1) % numTeams;
+                }
+            }
+
+            // 3. Distribuição em Zig-Zag (Teens e Kids)
+            var currentTeamIndex = 0;
+            var direction = 1;
+            var shuffledTeens = shuffleArray(teens.slice());
+            for (var ti = 0; ti < shuffledTeens.length; ti++) {
+                teams[currentTeamIndex].push(shuffledTeens[ti]);
+                currentTeamIndex += direction;
+                if (currentTeamIndex >= numTeams || currentTeamIndex < 0) {
+                    direction *= -1;
+                    currentTeamIndex += direction * 2;
+                }
+            }
+            
+            currentTeamIndex = 0;
+            direction = 1;
+            var shuffledKids = shuffleArray(kids.slice());
+            for (var ki = 0; ki < shuffledKids.length; ki++) {
+                teams[currentTeamIndex].push(shuffledKids[ki]);
+                currentTeamIndex += direction;
+                if (currentTeamIndex >= numTeams || currentTeamIndex < 0) {
+                    direction *= -1;
+                    currentTeamIndex += direction * 2;
+                }
+            }
+            
+            // 4. Distribuição dos jogadores velhos restantes (pelo time com menor idade média)
+            var teamAges = teams.map(function(team){ return team.reduce(function(sum, p){ return sum + p.age; }, 0); });
+            var sortedTeamIndices = teamAges.map(function(age, index){ return { age: age, index: index }; })
+                                              .sort(function(a, b){ return a.age - b.age; })
+                                              .map(function(item){ return item.index; });
+            
+            var oldPlayerIndex = 0;
+            while (oldPlayerIndex < remainingOldPlayers.length) {
+                for (var sti = 0; sti < sortedTeamIndices.length; sti++) {
+                    var teamIdx = sortedTeamIndices[sti];
+                    if (oldPlayerIndex < remainingOldPlayers.length) {
+                        teams[teamIdx].push(remainingOldPlayers[oldPlayerIndex]);
+                        oldPlayerIndex++;
+                    }
+                }
+            }
+
+            // 5. Distribuição dos jogadores não atribuídos (garante que todos foram alocados)
+            var allPlayers = players;
+            var assignedPlayers = teams.flat();
+            var unassignedPlayers = allPlayers.filter(function(p){ return assignedPlayers.indexOf(p) === -1; });
+            
+            while(unassignedPlayers.length > 0) {
+                var teamSizes = teams.map(function(t){ return t.length; });
+                var minSize = Math.min.apply(null, teamSizes);
+                var minSizeTeams = teams.filter(function(t){ return t.length === minSize; });
+                var targetTeam = shuffleArray(minSizeTeams)[0];
+                var playerToAdd = unassignedPlayers.shift();
+                
+                targetTeam.push(playerToAdd);
+            }
+
+            // 6. BALANCEAMENTO ITERATIVO (Tamanho do time)
+            var iterativeBalance = function() {
+                var attempts = 0; 
+                var MAX_ATTEMPTS = 100; 
+                var isThirteenPlayers = (numPlayers === 13 && numTeams === 3);
+
+                while (attempts < MAX_ATTEMPTS) {
+                    attempts++;
+                    
+                    var currentTeamSizes = teams.map(function(t){ return t.length; });
+                    var maxTeamSize = Math.max.apply(null, currentTeamSizes);
+                    var minTeamSize = Math.min.apply(null, currentTeamSizes);
+                    var diff = maxTeamSize - minTeamSize;
+
+                    if (isThirteenPlayers) {
+                        if (diff === 2) { // 5, 5, 3
+                            // Verifica se há times 5, 5, 3 e para.
+                            var sizes = currentTeamSizes.slice().sort(function(a,b){ return a-b; });
+                            if (sizes[0] === 3 && sizes[1] === 5 && sizes[2] === 5) break;
+                        }
+                        if (diff === 1 && attempts > 5) break; // Evita loop em 5, 4, 4
+                    } else {
+                        if (diff <= 1) break; // Lógica Padrão: 0 ou 1
+                    }
+                    
+                    var maxIndex = currentTeamSizes.findIndex(function(size){ return size === maxTeamSize; });
+                    var minIndex = currentTeamSizes.findIndex(function(size){ return size === minTeamSize; });
+                    
+                    if (maxIndex === -1 || minIndex === -1 || maxIndex === minIndex) break;
+
+                    var largerTeam = teams[maxIndex];
+                    var smallerTeam = teams[minIndex];
+
+                    var playerToMove = null;
+
+                    // Prioridade 1: Jogador mais jovem (<= 14) NÃO-GOLEIRO
+                    playerToMove = largerTeam
+                        .filter(function(p){ return !p.isGoalie && p.age <= 14; })
+                        .sort(function(a, b){ return a.age - b.age; })[0]; 
+
+                    // Prioridade 2: Jogador de linha mais jovem (qualquer idade)
+                    if (!playerToMove) {
+                        playerToMove = largerTeam
+                            .filter(function(p){ return !p.isGoalie; })
+                            .sort(function(a, b){ return a.age - b.age; })[0]; 
+                    }
+                    
+                    // Prioridade 3: Jogador mais jovem (incluindo Goleiros, se for a única opção)
+                    if (!playerToMove) {
+                        playerToMove = largerTeam
+                            .sort(function(a, b){ return a.age - b.age; })[0];
+                    }
+
+                    if (playerToMove) {
+                        var playerIndex = largerTeam.indexOf(playerToMove);
+                        if (playerIndex > -1) {
+                            largerTeam.splice(playerIndex, 1);
+                            smallerTeam.push(playerToMove);
+                        } else {
+                            break; 
+                        }
+                    } else {
+                        break; 
+                    }
+                }
+            };
+
+            iterativeBalance(); 
+
+            // ====================================================
+            // RENDERIZAÇÃO FINAL
+            // ====================================================
+            resultsDiv.className = 'grid-' + numTeams;
+            
+            var shuffledColors = shuffleArray(teamColors.slice());
+            var shuffledShields = shuffleArray(SHIELD_SVGS.slice());
+
+            teams.forEach(function(team, index) {
+                var teamDiv = document.createElement('div');
+                teamDiv.className = 'team';
+                var teamColorName = shuffledColors[index] || 'Cor ' + (index + 1);
+                var teamColorHex = colorMap[teamColorName] || '#ECEDEF';
+                var shieldSVGPath = shuffledShields[index % SHIELD_SVGS.length];
+                
+                // Separação e ordenação para campo/reserva (Titulares: 5)
+                var sortedTeamPlayers = team.sort(function(a, b) {
+                    if (a.isGoalie && !b.isGoalie) return -1; 
+                    if (!a.isGoalie && b.isGoalie) return 1;
+                    return b.age - a.age; 
+                });
+
+                var onFieldPlayers = sortedTeamPlayers.slice(0, 5);
+                var substitutes = sortedTeamPlayers.slice(5);
+
+                // LÓGICA DE CORREÇÃO DE GOLEIRO EM CAMPO
+                var designatedGoalie = null;
+                if (!onFieldPlayers.some(function(p){ return p.isGoalie; })) {
+                    var potentialGoalies = onFieldPlayers.filter(function(p){ return p.age >= 15; });
+                    if (potentialGoalies.length > 0) {
+                        designatedGoalie = shuffleArray(potentialGoalies)[0];
+                    }
+                }
+
+                var hasGoalieBeenPlaced = false;
+                var onFieldPlayersForDisplay = onFieldPlayers.map(function(player) {
+                    var p = {};
+                    for (var k in player) { if (Object.prototype.hasOwnProperty.call(player, k)) p[k] = player[k]; }
+
+                    if (!p.isGoalie && player === designatedGoalie) {
+                        p.isGoalie = true; 
+                        p.isTempGoalie = true; 
+                    }
+                    
+                    if (p.isGoalie && hasGoalieBeenPlaced) {
+                        p.isGoalie = false;
+                        p.isBackupGoalie = true; 
+                    } else if (p.isGoalie) {
+                        hasGoalieBeenPlaced = true;
+                    }
+
+                    return p;
+                });
+                
+                teamDiv.innerHTML = createTeamCardHTML(
+                    team, 
+                    teamColorName, 
+                    teamColorHex, 
+                    onFieldPlayersForDisplay, 
+                    substitutes,
+                    shieldSVGPath 
+                );
+
+                resultsDiv.appendChild(teamDiv);
+                
+                setTimeout(function(td){
+                    return function(){ td.classList.add('show'); };
+                }(teamDiv), 50 * index);
+            });
+        }
+        
+        // ====================================================
+        // INICIALIZAÇÃO E EVENT LISTENERS
+        // ====================================================
+        
+        // --- Jogadores e Estatísticas ---
+        var savedPlayers = null;
+        try { savedPlayers = localStorage.getItem('playerList'); } catch(e) { savedPlayers = null; }
+        if (savedPlayers) {
+            updateTextareaValue(savedPlayers);
+        } else {
+            updateTextareaValue(initialPlaceholder);
+        }
+
+        playersTextarea.addEventListener('focus', function() {
+            if (playersTextarea.value === initialPlaceholder) {
+                updateTextareaValue('');
+            }
+        });
+
+        playersTextarea.addEventListener('blur', function() {
+            if (playersTextarea.value.trim() === '') {
+                updateTextareaValue(initialPlaceholder);
+            }
+        });
+
+        playersTextarea.addEventListener('input', updateStats); 
+
+        // Salva a lista a cada 3 segundos
+        setInterval(function() {
+            try {
+                if (playersTextarea.value.trim() !== '' && playersTextarea.value !== initialPlaceholder) {
+                    localStorage.setItem('playerList', playersTextarea.value);
+                } else {
+                    localStorage.removeItem('playerList');
+                }
+            } catch(e) {
+                // ignore localStorage errors
+            }
+        }, 3000); 
+
+        // --- Data e Hora ---
+        var savedDate = null;
+        var savedTime = null;
+        try { savedDate = localStorage.getItem('matchDate'); } catch(e) { savedDate = null; }
+        try { savedTime = localStorage.getItem('matchTime'); } catch(e) { savedTime = null; }
+
+        if (savedDate) {
+            dateInput.value = savedDate;
+            updateDayOfWeek(savedDate);
+        } else {
+             updateDayOfWeek('');
+        }
+        if (savedTime) {
+            timeInput.value = savedTime;
+        }
+
+        dateInput.addEventListener('input', function(e){ formatInput(e.target, '/'); });
+        timeInput.addEventListener('input', function(e){ formatInput(e.target, ':'); });
+        
+        // --- Endereço e Mapa ---
+        addressInput.addEventListener('focus', filterAndRenderDropdown);
+        addressInput.addEventListener('click', filterAndRenderDropdown);
+
+        // Oculta o dropdown ao clicar fora
+        document.addEventListener('click', function(event) {
+            var container = document.getElementById('address-input-container');
+            var isClickInside = container && container.contains(event.target);
+            if (!isClickInside) {
+                customDropdown.style.display = 'none';
+            }
+        });
+
+        openMapBtn.addEventListener('click', function() {
+            var mapLink = addressInput.dataset.selectedLink; 
+            if (mapLink) {
+                window.open(mapLink, '_blank');
+            } else {
+                alert("Por favor, selecione um endereço da lista.");
+            }
+        });
+
+        updateMapButtonState(); // Garante o estado inicial do botão/imagem
+
+        // --- Botões Principais ---
+        drawBtn.addEventListener('click', drawTeams);
+        clearBtn.addEventListener('click', function() {
+            updateTextareaValue(initialPlaceholder);
+            try { localStorage.removeItem('playerList'); } catch(e) {}
+            resultsDiv.innerHTML = '';
+        });
+    }; // fim window.Sorteio.init
+}(window, document));

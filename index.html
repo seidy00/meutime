@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteador de Times</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="top-section">
+        <div class="container">
+            <h1>Sorteador de Times</h1>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div id="main-content-row">
+            
+            <div id="main-input-card">
+                <div id="player-input-area">
+                    <p>
+                        Adicione no campo abaixo os nomes dos jogadores da seguinte maneira: 
+                        <br>
+                        <strong>Nome, idade</strong>
+                        <br>
+                        <br>
+                        Se o jogador puder jogar no gol:
+                        <br>
+                        <strong>Nome, idade, G</strong>
+                    </p>
+                    <textarea id="players-textarea" placeholder="João, 19
+Pedro, 21, G
+Felipe, 16"></textarea>
+                </div>
+                
+                <div id="stats-container" class="stats-bar">
+                    <span id="player-count-stats">0 Jogadores • 0 Goleiros</span>
+                    <span id="avg-age-stats">Idade Média: N/A</span>
+                </div>
+                
+                <div class="controls">
+                    <button id="draw-btn">Sortear Times</button>
+                    <button id="clear-btn">Limpar Lista</button>
+                </div>
+            </div>
+            
+            <div id="map-card">
+                <div id="map-header-new"> 
+                    <span id="day-of-week-display"></span> 
+                    <input type="text" id="date-input" placeholder="DD/MM" maxlength="5">
+                    <input type="text" id="time-input" placeholder="HH:MM" maxlength="5">
+                </div>
+                
+                <div class="separator-line"></div>
+                
+                <div id="address-input-container">
+                    <input type="text" id="address-input" placeholder="Selecione um endereço" autocomplete="off" readonly>
+                    
+                    <div id="custom-address-dropdown">
+                        </div>
+                </div>
+                
+                <div id="map-image-container">
+                    <img id="map-image" alt="Imagem do local selecionado">
+                    <div class="image-placeholder">Imagem do local não disponível ou não carregada.</div>
+                </div>
+
+                <button id="open-map-btn" disabled>Abrir no Google Maps</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="padding: 0 20px 0 20px;">
+        <div id="results">
+            </div>
+    </div>
+
+    <div class="explanation-section">
+        <div class="explanation-content">
+            <h2>Como Funciona o Sorteio</h2>
+            <p>A lógica do sorteio, embora pareça simples por fora, foi construída com vários critérios para garantir o máximo de equilíbrio entre os times.</p>
+            
+            <h3>Critérios de Sorteio:</h3>
+            <ol>
+                <li>**Separação dos Jogadores:** Primeiro, todos os jogadores são lidos da sua lista e separados em quatro grupos principais: **Goleiros**, **Jogadores Mais Velhos** (acima de 20 anos), **Adolescentes** (entre 15 e 19 anos) e **Crianças** (14 anos ou menos).</li>
+                <li>**Sorteio de Goleiros:** Os goleiros são os primeiros a serem distribuídos. O programa coloca um goleiro em cada time, até que todos os times tenham um ou todos os goleiros tenham sido alocados.</li>
+                <li>**Equilíbrio de Experiência:** Em seguida, os jogadores mais velhos são distribuídos. Eles são alocados com um cuidado extra, para equilibrar a experiência entre as equipes.</li>
+                <li>**Distribuição em Zig-Zag:** Para os grupos de adolescentes e crianças, o programa usa um método de distribuição em "zig-zag" para garantir que a idade seja bem espalhada entre as equipes.</li>
+                <li>**Ajuste Final (Balanceamento de Tamanho):** Após distribuir todos os jogadores, o programa faz um ajuste final para balancear a quantidade de jogadores. Para a maioria dos casos, a diferença máxima é de 1 jogador (ex: 5, 4, 4).</li>
+                <li>**Exceção 13 Jogadores:** Se houver 13 jogadores, o sorteio **só será concluído** quando a diferença for de 2 jogadores, forçando o resultado **5, 5, 3**, se a distribuição de idade permitir.</li>
+            </ol>
+        </div>
+    </div>
+
+<script src="js/draw.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
