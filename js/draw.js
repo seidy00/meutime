@@ -602,6 +602,10 @@
             teams.forEach(function(team, index) {
                 var teamDiv = document.createElement('div');
                 teamDiv.className = 'team';
+
+		teamDiv.style.transform = 'translateY(25px)';
+		teamDiv.style.opacity = '0';
+
                 var teamColorName = shuffledColors[index] || 'Cor ' + (index + 1);
                 var teamColorHex = colorMap[teamColorName] || '#ECEDEF';
                 var shieldSVGPath = shuffledShields[index % SHIELD_SVGS.length];
@@ -610,8 +614,34 @@
                 var sortedTeamPlayers = team.sort(function(a, b) {
                     if (a.isGoalie && !b.isGoalie) return -1; 
                     if (!a.isGoalie && b.isGoalie) return 1;
-                    return b.age - a.age; 
+                    return b.age - a.age;
                 });
+
+		// INDICADORES DE CARROSSEL (versão mobile)
+		var carouselIndicators = document.getElementById('carousel-indicators');
+		carouselIndicators.innerHTML = ''; // limpa os pontos antigos
+
+		if (window.innerWidth <= 768) {
+		    var totalTeams = teams.length;
+		    for (let i = 0; i < totalTeams; i++) {
+		        var dot = document.createElement('div');
+		        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+		        carouselIndicators.appendChild(dot);
+		    }
+
+		    var resultsContainer = document.getElementById('results');
+		    var dots = document.querySelectorAll('.carousel-dot');
+
+		    resultsContainer.addEventListener('scroll', function () {
+		        var scrollLeft = resultsContainer.scrollLeft;
+		        var cardWidth = resultsContainer.clientWidth;
+		        var activeIndex = Math.round(scrollLeft / cardWidth);
+        
+		        dots.forEach((dot, idx) => {
+		            dot.classList.toggle('active', idx === activeIndex);
+		        });
+		    });
+		}
 
                 var onFieldPlayers = sortedTeamPlayers.slice(0, 5);
                 var substitutes = sortedTeamPlayers.slice(5);
@@ -656,9 +686,13 @@
 
                 resultsDiv.appendChild(teamDiv);
                 
-                setTimeout(function(td){
-                    return function(){ td.classList.add('show'); };
-                }(teamDiv), 50 * index);
+		setTimeout(function(td){
+  		  return function(){
+			td.classList.add('show');
+			td.style.transform = 'translateY(0)';
+			td.style.opacity = '1';
+			};
+		}(teamDiv), 50 * index);
             });
         }
         

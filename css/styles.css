@@ -654,3 +654,61 @@ h1 {
         grid-template-columns: 1fr;
     }
 }
+
+/* ==================================================== */
+/* MODO CARROSSEL PARA MOBILE                           */
+/* ==================================================== */
+@media (max-width: 768px) {
+    #results {
+        display: flex !important;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 15px;
+        padding: 0 0px 15px 0px; /* igual à .container */
+        scroll-behavior: smooth;
+    }
+
+    .team {
+        flex: 0 0 100%;
+        min-width: 100%;
+        scroll-snap-align: center;
+        transition: transform 0.3s ease, opacity 0.5s ease;
+        box-sizing: border-box;
+    }
+
+    .team.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Oculta scrollbar */
+    #results::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* ==================================================== */
+/* INDICADORES DO CARROSSEL                             */
+/* ==================================================== */
+@media (max-width: 768px) {
+    #carousel-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .carousel-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #5A6266;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .carousel-dot.active {
+        background-color: #ECEDEF;
+        transform: scale(1.2);
+    }
+}
