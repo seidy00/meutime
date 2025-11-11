@@ -1,0 +1,846 @@
+/* ==========================
+   styles.css (Sorteio-ver9)
+   ========================== */
+
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #000000;
+    color: #ECEDEF;
+}
+
+.top-section {
+    position: relative;
+    background-color: #111517;
+    color: #ECEDEF;
+    text-align: center;
+    padding: 20px 20px;
+    height: 80px;
+}
+.container {
+    max-width: 1440px;
+    margin: auto;
+    padding: 0 20px;
+}
+h1 {
+    text-align: left;
+    font-size: 2em;
+    margin: 0px 0px 16px;
+}
+h2 {
+    text-align: left;
+    font-size: 1.25em;
+    margin: 0px 0px 16px;
+}
+p {
+    text-align: left;
+    font-size: 0.875em;
+    margin: 0px 0px 16px;
+}
+
+.baseboard-box {
+    background-color: #111517;
+    color: #858787;
+    text-align: center;
+}
+.baseboard {
+    max-width: 1440px;
+    display: flex;
+    gap: 12px;
+    margin: auto;
+    padding: 10px 0 28px;
+    font-size: 0.875em;
+}
+.baseboard-column {
+    width: 33%;
+}
+.baseboard-column-right {
+    text-align: right;
+    width: 33%;
+}
+
+/* ESTILOS DAS ABAS (TABS) */
+.tabs {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    padding-bottom: 0;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    gap: 0px;
+    margin: 0;
+}
+
+.tab-button {
+    background-color: transparent;
+    color: #ECEDEF;
+    border: none;
+    border-radius: 6px 6px 0px 0px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background-color 0.25s ease, color 0.15s ease;
+}
+
+.tab-button:hover {
+    background-color: #23282d;
+    /* transform: translateY(-1px); */
+}
+
+.tab-button.active {
+    background-color: #1c2125;
+    /* color: #1E1F22; */
+    font-weight: 600;
+}
+
+.tab-content {
+    display: block;
+    transition: opacity 0.3s ease;
+}
+
+.tab-content.hidden {
+    display: none;
+    opacity: 0;
+}
+
+.free-draw {
+    margin: 20px;
+    padding-bottom: 48px;
+}
+
+/* ==================================================== */
+/* LAYOUT PRINCIPAL (2:1)                               */
+/* ==================================================== */
+#main-content-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Proporção 2:1 */
+    gap: 12px;
+    margin-top: 48px;
+    margin-bottom: 24px;
+}
+
+/* Estilo do Card de Input (2/3 da largura) */
+#main-input-card {
+    background-color: #1C2125;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo do Card de Mapa (1/3 da largura) */
+#map-card {
+    background-color: #1C2125;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    /* REMOVIDO: min-height: 480px; */
+    text-align: center;
+}
+
+/* NOVO ESTILO PARA O CABEÇALHO DO MAPA */
+#map-card #map-header-new {
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-align: center;
+    width: 100%; /* Garante que o header ocupe a largura total para a linha separadora */
+}
+
+/* ESTILO PARA A NOVA LINHA SEPARADORA */
+.separator-line {
+    width: 100%;
+    height: 1px;
+    background-color: #6C7071; /* Cor da linha solicitada */
+    margin: 15px 0; /* Espaço entre a data/hora e o endereço/mapa */
+}
+
+/* Estilo comum para os inputs de Data e Hora */
+#map-card #date-input,
+#map-card #time-input {
+    text-align: center;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    margin: 0 auto;
+    width: auto; /* Largura automática para inline */
+    box-sizing: border-box;
+    font-family: 'Space Grotesk', sans-serif;
+    outline: none;
+    cursor: text;
+}
+
+#map-card #date-input::placeholder,
+#map-card #time-input::placeholder {
+    color: inherit;
+    opacity: 0.8;
+}
+
+/* NOVO ESTILO: Dia da Semana (Principal) */
+#map-card #day-of-week-display {
+    color: #ECEDEF;
+    font-size: 1.5em;
+    font-weight: 700;
+    display: inline; /* Fica na mesma linha que a data */
+    text-align: center;
+    min-height: 1.5em;
+}
+
+/* Estilo para a DATA (DD/MM) - AGORA COM A COR PRINCIPAL BRANCA */
+#map-card #date-input {
+    color: #ECEDEF; /* COR CORRIGIDA PARA BRANCO */
+    font-size: 1.5em; /* Tamanho igual ao dia da semana para alinhamento */
+    font-weight: 700;
+    margin: 0;
+    display: inline;
+    width: 85px; /* Define uma largura para o DD/MM */
+}
+
+/* Estilo para a HORA (HH:MM, que será secundário e em nova linha) */
+#map-card #time-input {
+    color: #858787; /* Cor secundária (continua cinza) */
+    font-size: 1.2em;
+    font-weight: 700;
+    display: block; /* Volta para a linha de baixo */
+    margin: 8px auto 2px auto;
+    width: 100%; /* Volta a ocupar a largura total do centro */
+}
+/* FIM DO NOVO ESTILO */
+
+#map-card h2 {
+    display: none;
+}
+/* REMOVIDO: #map-card #map-instructions { ... } */
+
+/* Removidos estilos de iframe */
+#map-container, #add-address-btn {
+    display: none !important;
+}
+
+#player-input-area {
+    max-width: 800px;
+    margin: 0 auto;
+}
+#player-input-area p {
+    color: #858787;
+}
+/* CAMPO DE TEXTO (JOGADORES) */
+#player-input-area textarea {
+    width: 100%;
+    height: 180px;
+    padding: 15px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: #272C32;
+    color: #ECEDEF;
+    resize: vertical;
+    outline: none;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: bold;
+}
+
+/* ==================================================== */
+/* CONTAINER E ESTILIZAÇÃO DO INPUT E DROPDOWN (RESTITUÍDO) */
+/* ==================================================== */
+#address-input-container {
+    position: relative; /* Essencial para o dropdown ficar abaixo */
+    width: 100%;
+    margin-bottom: 8px; /* AJUSTADO: Espaço menor antes da imagem */
+}
+
+#address-input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    border: none;
+    background-color: #272C32;
+    color: #ECEDEF;
+    font-family: 'Space Grotesk', sans-serif;
+    box-sizing: border-box;
+    font-size: 16px;
+    outline: none;
+    font-weight: bold;
+    transition: box-shadow 0.2s;
+    cursor: pointer; /* Indica que é clicável */
+}
+
+#address-input:focus {
+    box-shadow: 0 0 0 2px #4A56E2;
+}
+
+/* ESTILO DO DROPDOWN PERSONALIZADO */
+#custom-address-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%; /* Mesma largura do input */
+    background-color: #272C32; /* Mesma cor do input */
+    border-radius: 8px;
+    box-shadow: none; /* REMOVIDA A SOMBRA */
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none; /* Escondido por padrão */
+    padding: 0;
+    margin: 4px 0 0 0;
+    box-sizing: border-box;
+}
+
+/* ITENS DA LISTA */
+.dropdown-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: left; /* GARANTINDO ALINHAMENTO A ESQUERDA */
+}
+
+/* Estilo da Linha/Item quando o mouse passa */
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: #4A56E2; /* Cor de destaque azul */
+}
+
+/* Estilo para o texto do endereço quando em hover (para manter o contraste) */
+.dropdown-item:hover span[style*="#858787"],
+.dropdown-item:focus span[style*="#858787"] {
+    color: #ECEDEF !important;
+}
+
+/* Linha divisória sutil */
+.dropdown-item:not(:last-child) {
+    border-bottom: 1px solid #3A3F45;
+}
+
+/* SCROLLBAR CUSTOMIZADA (Cinza) */
+#players-textarea::-webkit-scrollbar,
+#custom-address-dropdown::-webkit-scrollbar {
+    width: 8px;
+}
+#players-textarea::-webkit-scrollbar-track,
+#custom-address-dropdown::-webkit-scrollbar-track {
+    background: #272C32;
+    border-radius: 10px;
+}
+#players-textarea::-webkit-scrollbar-thumb,
+#custom-address-dropdown::-webkit-scrollbar-thumb {
+    background-color: #5A6266;
+    border-radius: 10px;
+}
+#players-textarea::-webkit-scrollbar-thumb:hover,
+#custom-address-dropdown::-webkit-scrollbar-thumb:hover {
+    background-color: #858787;
+}
+
+/* Estilos para cor do placeholder real/valor inicial */
+#players-textarea.initial-placeholder {
+    color: #939699 !important;
+}
+#players-textarea::placeholder,
+#players-textarea:-ms-input-placeholder {
+    color: #939699;
+    opacity: 1;
+}
+
+/* BARRA DE ESTATÍSTICAS */
+.stats-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: 0.95em;
+    color: #858787;
+}
+.stats-bar strong {
+     color: #ECEDEF;
+     font-weight: 700;
+}
+
+/* CONTAINER DA IMAGEM E IMAGEM */
+#map-image-container {
+    width: 100%;
+    height: 190px; /* AJUSTADO: Imagem maior */
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 0px; /* AJUSTADO: Espaço menor após input */
+    margin-bottom: 0px;
+    background-color: #272C32; /* Cor de fundo enquanto carrega */
+    display: none;
+    position: relative;
+}
+
+#map-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Garante que a imagem cubra o container */
+    transition: opacity 0.3s;
+    opacity: 0; /* Inicia transparente */
+}
+
+/* Estilo para imagem não carregada */
+.image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #858787;
+    height: 100%;
+    text-align: center;
+    font-size: 0.9em;
+    padding: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* BOTOES GERAIS */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+/* Estilos do Botão "Abrir no Mapa" */
+#open-map-btn {
+    background: none;
+    color: #7a84ff;
+    width: auto;
+    padding: 10px 6px 0px 6px;
+    font-size: 18px;
+    border: none;
+    border-radius: 0px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Space Grotesk', sans-serif;
+    transition: color 0.2s ease, transform 0.15s ease;
+    margin-top: auto; /* Empurra para baixo (mantido para layout flex) */
+}
+/* #open-map-btn:hover:not([disabled]) {
+    background-color: #8E96FF;
+} */
+
+/* ESTILO PARA BOTÃO DESATIVADO */
+#open-map-btn[disabled] {
+    /* background-color: #2E368F; */
+    background: none;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Botões Sorteio/Limpar */
+#draw-btn, #clear-btn {
+    padding: 14px 30px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Space Grotesk', sans-serif;
+}
+#draw-btn {
+    background-color: #ECEDEF;
+    color: #111517;
+}
+#draw-btn:hover {
+    background-color: #8E96FF;
+}
+#clear-btn {
+    background-color: #0b0e0f;
+    color: white;
+}
+#clear-btn:hover {
+    background-color: #2F3233;
+}
+
+/* ==================================================== */
+/* CARDS DE TIMES (GRID PADRÃO)                         */
+/* ==================================================== */
+.results-wrapper {
+  max-width: 1440px; /* mesmo max-width da .container (ajuste se necessário) */
+  margin: auto;
+}
+
+#results-header .results-title {
+    text-align: left;
+    color: #4A56E2;
+    font-size: 1.2rem;
+    /* font-weight: 500; */
+    font-weight: bold;
+    margin-top: auto;
+    margin-bottom: 4px;
+}
+
+#results {
+    display: grid;
+    gap: 12px;
+}
+/* AJUSTE DE GRID PARA 2, 3 E 4 TIMES (Desktop/Padrão) */
+#results.grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+#results.grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+#results.grid-4 {
+    grid-template-columns: repeat(4, 1fr); /* Padrão: 4 colunas em telas grandes */
+}
+
+.team {
+    background-color: #1C2125;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.5s ease;
+    opacity: 0;
+    transform: translateY(20px);
+}
+.team.show {
+    opacity: 1;
+    transform: translateY(0);
+    padding-left: 0px;
+    padding-right: 2px;
+}
+
+/* HEADER DO CARD (INFOS) */
+.team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.team-header .name-and-color {
+    display: flex;
+    align-items: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    padding-left: 14px;
+}
+
+/* TAMANHO DO ESCUDO CORRIGIDO */
+.team-shield {
+    width: 30px;
+    height: 30px;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.name-and-color {
+    display: flex;
+    align-items: center;
+    font-size: 1.5em;
+    font-weight: 700;
+}
+.team-header .info-text {
+    text-align: right;
+    font-size: 0.9em;
+    color: #858787;
+    padding-right: 14px;
+}
+.team-header .info-text strong {
+    color: #ECEDEF;
+}
+
+/* DESENHO DO CAMPO (FUTEBOL PITCH) */
+.pitch-container {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* Garante um quadrado */
+    background-color: #101416;
+    border-radius: 0px;
+    overflow: hidden;
+    border: 1px solid #333;
+}
+
+.football-pitch {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #5A6266;
+    border-top: none;
+    border-radius: 0 0 0px 0px;
+    box-sizing: border-box;
+    background-color: #101416;
+}
+
+/* Linhas do Campo */
+.line-top { position: absolute; top: 0; left: 0; width: 100%; height: 1px; background-color: #5A6266; z-index:2;}
+.penalty-box { position: absolute; top: 0%; left: 26%; width: 48%; height: 16%; border: 1px solid #5A6266; background-color:#101416; border-top: none; box-sizing: border-box; z-index:1;}
+.six-yard-box { position: absolute; top: 0%; left: 39%; width: 22%; height: 8%; border: 1px solid #5A6266; border-top: none; box-sizing: border-box; z-index:2;}
+.penalty-spot { position: absolute; top: 12%; left: 50%; width: 4px; height: 4px; background-color: #5A6266; border-radius: 50%; transform: translate(-50%, -50%); }
+.center-circle { position: absolute; bottom: -4%; left: 25%; width: 50%; height: 25%; border: 1px solid #5A6266; border-top-left-radius: 100vw; border-top-right-radius: 100vw; box-sizing: border-box; border-bottom-color: transparent; }
+.penalty-arc { position: absolute; top: 12%; left: 32%; width: 36%; height: 18%; border: 1px solid #5A6266; border-top-color: transparent; border-bottom-left-radius: 100vw; border-bottom-right-radius: 100vw; box-sizing: border-box; transform: translateY(-50%); }
+
+/* POSICIONAMENTO E AVATAR DOS JOGADORES */
+.player-marker {
+    position: absolute;
+    cursor: default;
+    font-size: 12px;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+.player-avatar {
+    /* Tamanho para Titulares */
+    width: 44px;
+    height: 44px;
+    background-color: #ECEDEF;
+    /* clip-path para DECÁGONO (10 lados) */
+    clip-path: polygon(
+        50% 0%, 80.9017% 9.5492%, 97.5528% 34.5492%, 97.5528% 65.4508%,
+        80.9017% 90.4508%, 50% 100%, 19.0983% 90.4508%, 2.4472% 65.4508%,
+        2.4472% 34.5492%, 19.0983% 9.5492%
+    );
+    
+    margin: 0 auto 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    transform: rotate(270deg);
+}
+
+/* Avatar menor para Reservas */
+.substitute-player .player-avatar {
+     width: 32px;
+     height: 32px;
+     font-size: 16px;
+     margin: 0;
+}
+
+/* CORREÇÃO: Gira o conteúdo (letra) de volta para ficar legível */
+.initial-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    transform: rotate(-270deg);
+}
+
+/* Estilo para Nome e Idade dos Titulares */
+.player-marker .player-name {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px;
+    color: #ECEDEF;
+    font-size: 1.4em;
+    font-weight: bold;
+}
+.player-marker .player-age {
+    display: block;
+    font-size: 1.1em;
+    color: #858787;
+    margin-top: -2px;
+}
+
+/* POSICIONAMENTOS NO CAMPO */
+.pos-gk { top: 16%; left: 50%; }
+.f1-d1 { top: 40%; left: 32%; }
+.f1-d2 { top: 40%; left: 68%; }
+.f1-m1 { top: 76%; left: 24%; }
+.f1-a1 { top: 76%; left: 76%; }
+.f2-d1 { top: 44%; left: 50%; }
+.f2-m1 { top: 66%; left: 18%; }
+.f2-m2 { top: 66%; left: 82%; }
+.f2-a1 { top: 88%; left: 50%; }
+.f3-d1 { top: 40%; left: 50%; }
+.f3-m1 { top: 46%; left: 24%; }
+.f3-m2 { top: 46%; left: 76%; }
+.f3-a1 { top: 76%; left: 50%; }
+.pos-5-d1 { top: 40%; left: 30%; }
+.pos-5-d2 { top: 40%; left: 70%; }
+.pos-5-m1 { top: 60%; left: 50%; }
+.pos-5-a1 { top: 80%; left: 35%; }
+.pos-5-a2 { top: 80%; left: 65%; }
+.f0-m1 { top: 65%; left: 50%; }
+.f2L-d1 { top: 60%; left: 30%; }
+.f2L-d2 { top: 60%; left: 70%; }
+.f3L-d1 { top: 44%; left: 50%; }
+.f3L-m1 { top: 72%; left: 26%; }
+.f3L-m2 { top: 72%; left: 74%; }
+/* FIM DO POSICIONAMENTO */
+
+
+/* Estilos para a lista de jogadores excedentes (Substitutos) */
+.substitutes-section {
+    margin-top: 0px;
+    padding-top: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.substitutes-section h4 {
+    font-size: 1.05em;
+    color: #ECEDEF;
+    margin: 5px 0 10px 0;
+    font-weight: bold;
+}
+.substitutes-section h4 .count {
+    color: #858787;
+    font-weight: normal;
+}
+.substitutes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: block;
+}
+.substitute-player {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
+    border-bottom: 1px solid #2C3134;
+    margin-bottom: 0;
+    cursor: default;
+}
+.substitute-player:last-child {
+     border-bottom: none;
+}
+
+.explanation-box {
+    background-color: #1C2125;
+    margin-top: 24px;
+}
+.explanation-section {
+    max-width: 1440px;
+    display: flex;
+    gap: 12px;
+    margin: auto;
+    padding: 40px 0;
+}
+.explanation-content {
+    width: 30%;
+}
+.explanation-content-right {
+    width: 70%;
+}
+
+li {
+    font-size: 0.875em;
+    margin-bottom: 8px;
+}
+
+/* ==================================================== */
+/* RESPONSIVIDADE (PONTOS DE QUEBRA AJUSTADOS)          */
+/* ==================================================== */
+
+/* 1. Quebra de 4 colunas para 3 colunas (no container max-width) */
+@media (max-width: 1440px) {
+     #results.grid-4 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* 2. Quebra de Layout 2:1 para 1 coluna (Input e Mapa) */
+@media (max-width: 1040px) {
+    #main-content-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 3. Ponto de quebra para os CARDS DE TIME (De 3 colunas para 2) */
+@media (max-width: 960px) {
+     #results.grid-3, #results.grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 4. Quebra para telas muito pequenas (1 coluna) */
+@media (max-width: 768px) {
+    #results.grid-3, #results.grid-4, #results.grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==================================================== */
+/* MODO CARROSSEL PARA MOBILE                           */
+/* ==================================================== */
+@media (max-width: 768px) {
+    #results {
+        display: flex !important;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 12px;
+        padding: 0 0px 15px 0px; /* igual à .container */
+        scroll-behavior: smooth;
+    }
+
+    .team {
+        flex: 0 0 100%;
+        min-width: 100%;
+        scroll-snap-align: center;
+        transition: transform 0.3s ease, opacity 0.5s ease;
+        box-sizing: border-box;
+    }
+
+    .team.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Oculta scrollbar */
+    #results::-webkit-scrollbar {
+        display: none;
+    }
+
+    .explanation-section {
+        flex-direction: column;
+        gap: 12px;
+        margin: auto;
+        padding: 40px 20px;
+    }
+    .explanation-content {
+        width: 100%;
+    }
+    .explanation-content-right {
+        width: 100%;
+    }
+
+    .baseboard {
+        gap: 24px;
+        padding: 10px 20px 20px;
+    }
+}
+
+/* ==================================================== */
+/* INDICADORES DO CARROSSEL                             */
+/* ==================================================== */
+@media (max-width: 768px) {
+    #carousel-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .carousel-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #5A6266;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .carousel-dot.active {
+        background-color: #ECEDEF;
+        transform: scale(1.2);
+    }
+}
