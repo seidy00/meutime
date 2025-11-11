@@ -50,7 +50,7 @@ p {
     display: flex;
     gap: 12px;
     margin: auto;
-    padding: 10px 0 28px;
+    padding: 10px 20px 28px;
     font-size: 0.875em;
 }
 .baseboard-column {
@@ -357,7 +357,7 @@ p {
     padding: 8px 0;
     max-width: 800px;
     margin: 0 auto;
-    font-size: 0.95em;
+    font-size: 16px;
     color: #858787;
 }
 .stats-bar strong {
@@ -417,7 +417,7 @@ p {
     color: #7a84ff;
     width: auto;
     padding: 10px 6px 0px 6px;
-    font-size: 18px;
+    font-size: 16px;
     border: none;
     border-radius: 0px;
     cursor: pointer;
@@ -441,7 +441,7 @@ p {
 /* Botões Sorteio/Limpar */
 #draw-btn, #clear-btn {
     padding: 14px 30px;
-    font-size: 18px;
+    font-size: 16px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -474,7 +474,7 @@ p {
 #results-header .results-title {
     text-align: left;
     color: #4A56E2;
-    font-size: 1.2rem;
+    font-size: 18px;
     /* font-weight: 500; */
     font-weight: bold;
     margin-top: auto;
@@ -517,12 +517,12 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
 }
 .team-header .name-and-color {
     display: flex;
     align-items: center;
-    font-size: 1.5em;
+    font-size: 22px;
     font-weight: bold;
     padding-left: 14px;
 }
@@ -538,12 +538,12 @@ p {
 .name-and-color {
     display: flex;
     align-items: center;
-    font-size: 1.5em;
+    font-size: 14px;
     font-weight: 700;
 }
 .team-header .info-text {
     text-align: right;
-    font-size: 0.9em;
+    font-size: 14px;
     color: #858787;
     padding-right: 14px;
 }
@@ -640,12 +640,12 @@ p {
     text-overflow: ellipsis;
     max-width: 90px;
     color: #ECEDEF;
-    font-size: 1.4em;
+    font-size: 16px;
     font-weight: bold;
 }
 .player-marker .player-age {
     display: block;
-    font-size: 1.1em;
+    font-size: 13px;
     color: #858787;
     margin-top: -2px;
 }
@@ -686,9 +686,9 @@ p {
     padding-right: 20px;
 }
 .substitutes-section h4 {
-    font-size: 1.05em;
+    font-size: 16px;
     color: #ECEDEF;
-    margin: 5px 0 10px 0;
+    margin: 0 0 10px 0;
     font-weight: bold;
 }
 .substitutes-section h4 .count {
@@ -704,11 +704,14 @@ p {
 .substitute-player {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 5px 0;
+    gap: 12px;
+    padding: 6px 0;
     border-bottom: 1px solid #2C3134;
     margin-bottom: 0;
     cursor: default;
+}
+.substitute-player .player-age {
+    color: #858787;
 }
 .substitute-player:last-child {
      border-bottom: none;
@@ -723,7 +726,7 @@ p {
     display: flex;
     gap: 12px;
     margin: auto;
-    padding: 40px 0;
+    padding: 40px 20px;
 }
 .explanation-content {
     width: 30%;
