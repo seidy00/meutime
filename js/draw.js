@@ -599,6 +599,23 @@
             var shuffledColors = shuffleArray(teamColors.slice());
             var shuffledShields = shuffleArray(SHIELD_SVGS.slice());
 
+            resultsDiv.innerHTML = "";
+            // atualiza o header (fora do #results) — cria se não existir
+            var resultsHeader = document.getElementById('results-header');
+            if (!resultsHeader) {
+                // caso não tenha sido criado no HTML, cria dinamicamente acima de #results
+                resultsHeader = document.createElement('div');
+                resultsHeader.id = 'results-header';
+                resultsDiv.parentNode.insertBefore(resultsHeader, resultsDiv);
+            }
+            resultsHeader.innerHTML = ''; // limpa
+
+            var resultsTitle = document.createElement('h2');
+            resultsTitle.className = 'results-title';
+            resultsTitle.textContent = 'Escalações';
+            resultsHeader.appendChild(resultsTitle);
+
+
             teams.forEach(function(team, index) {
                 var teamDiv = document.createElement('div');
                 teamDiv.className = 'team';

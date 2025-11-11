@@ -25,4 +25,29 @@
         }
     });
 
+// CONTROLE DAS ABAS
+document.addEventListener('DOMContentLoaded', () => {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const target = button.getAttribute('data-tab');
+
+            // Atualiza aba ativa
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            // Mostra o conteúdo correto
+            tabContents.forEach(content => {
+                if (content.id === 'tab-' + target) {
+                    content.classList.remove('hidden');
+                } else {
+                    content.classList.add('hidden');
+                }
+            });
+        });
+    });
+});
+
 }(window, document));
