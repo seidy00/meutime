@@ -868,6 +868,42 @@
                 // ===============================
                 resultsDiv.innerHTML = ""; // limpa lista atual
 
+                try {
+                    let resultsHeader = document.getElementById('results-header');
+
+                    // Se ainda não existir, cria tudo do zero
+                    if (!resultsHeader) {
+                        resultsHeader = document.createElement('div');
+                        resultsHeader.id = 'results-header';
+                        resultsHeader.className = 'results-header';
+
+                        const title = document.createElement('h2');
+                        title.className = 'results-title';
+                        title.textContent = 'Escalações';
+
+                        resultsHeader.appendChild(title);
+
+                        // Insere acima da área de resultados
+                        resultsDiv.parentNode.insertBefore(resultsHeader, resultsDiv);
+
+                    } else {
+                        // Se existir, mas estiver vazio, recria o título
+                        let title = resultsHeader.querySelector('.results-title');
+
+                        if (!title) {
+                            title = document.createElement('h2');
+                            title.className = 'results-title';
+                            resultsHeader.appendChild(title);
+                        }
+
+                        title.textContent = 'Escalações';
+                        resultsHeader.style.display = 'block';
+                    }
+
+                } catch (e) {
+                    console.warn("Não foi possível criar o results-header no modo compartilhado:", e);
+                }
+
                 const teamsToRender = data.teams || [];
                 resultsDiv.className = 'grid-' + (teamsToRender.length || 2);
 

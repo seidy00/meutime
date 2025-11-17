@@ -98,6 +98,12 @@ p {
     font-weight: 600;
 }
 
+@media (max-width: 768px) {
+    .controls {
+        flex-direction: column
+    }
+}
+
 .tab-content {
     display: block;
     transition: opacity 0.3s ease;
