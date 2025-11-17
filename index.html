@@ -53,6 +53,7 @@ Felipe, 16"></textarea>
                 <div class="controls">
                     <button id="draw-btn">Sortear Times</button>
                     <button id="clear-btn">Limpar Lista</button>
+                    <button id="share-btn" title="Compartilhar resultado" aria-label="Compartilhar resultado">Compartilhar</button>
                 </div>
             </div>
             
@@ -64,6 +65,11 @@ Felipe, 16"></textarea>
                 </div>
                 
                 <div class="separator-line"></div>
+
+                <div id="shared-address-info">
+                    <strong id="shared-address-name"></strong><br>
+                    <span id="shared-address-full"></span>
+                </div>
                 
                 <div id="address-input-container">
                     <input type="text" id="address-input" placeholder="Selecione um endereço" autocomplete="off" readonly>
@@ -106,7 +112,6 @@ Felipe, 16"></textarea>
                 <li>Equilíbrio de Experiência: Em seguida, os jogadores mais velhos são distribuídos. Eles são alocados com um cuidado extra, para equilibrar a experiência entre as equipes.</li>
                 <li>Distribuição em Zig-Zag: Para os grupos de adolescentes e crianças, o programa usa um método de distribuição em "zig-zag" para garantir que a idade seja bem espalhada entre as equipes.</li>
                 <li>Ajuste Final (Balanceamento de Tamanho): Após distribuir todos os jogadores, o programa faz um ajuste final para balancear a quantidade de jogadores. Para a maioria dos casos, a diferença máxima é de 1 jogador (ex: 5, 4, 4).</li>
-                <li>Exceção 13 Jogadores: Se houver 13 jogadores, o sorteio só será concluído quando a diferença for de 2 jogadores, forçando o resultado 5, 5, 3, se a distribuição de idade permitir.</li>
             </ol>
         </div>
     </div>
@@ -120,14 +125,15 @@ Felipe, 16"></textarea>
     </div>
 </div>
 
-<script src="js/draw.js"></script>
-<script src="js/main.js"></script>
-</body>
 <div class="baseboard-box">
     <div class="baseboard">
         <div class="baseboard-column">Criado por Seidy</div>
         <div class="baseboard-column">Design baseado no Sofascore</div>
-        <div class="baseboard-column">ver 9.5</div>
+        <div class="baseboard-column">ver 9.6.0</div>
     </div>
 </div>
+
+<script src="js/draw.js"></script>
+<script src="js/main.js"></script>
+</body>
 </html>

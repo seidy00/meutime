@@ -35,20 +35,14 @@
             { 
                 name: "Arena Society", 
                 address: "R. Alfredo José Athaíde - Alto do Céu, João Pessoa", 
-                mapLink: "https://www.google.com/maps/place/Campo+Society/@-7.0979558,-34.8653826,2171m/data=!3m1!1e3!4m6!3m5!1s0x7ace700624b6665:0xb94abc68788cdb98!8m2!3d-7.0979818!4d-34.8652132!16s%2Fg%2F11yh_3c94n?authuser=0&entry=ttu&g_ep=EgoyMDI1MTAxMy4wIKXMDSoASAFQAw%3D%3D",
-                imageURL: "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nr0kNntXaE_JUcYw3L6w2wSyIA2veZBcoqJClBPv3SbDJNnGa6ETZ9ml0K9fPDTMSXAlOn6GHNrGsSQttEZX6GGAhBl-Q5_Guxr9A20xuZeWzqFxug6TTa619Onf2o9ajhSN-GX5YbgKVs=s1024-v1"
+                mapLink: "https://maps.app.goo.gl/Y6DMcgMWDAs9gLNNA",
+                imageURL: "https://lh3.googleusercontent.com/gps-cs-s/AG0ilSxrg4JqSDwGTt988L3g-JIo8ayxPOk499ukrFg696LC7t-YpjyeQqOsX-GodQt_yzOfzLV7k6emqSNE6vpSYs0xMc6iiT85sLlrNcDmRD7I934em09c01XxJYbu4AJihmibJQvG3YYQil0B=w408-h306-k-no"
             },
             { 
                 name: "Open Arena", 
                 address: "Rua Dr. San Juan, 193 - Estados, João Pessoa", 
-                mapLink: "https://www.google.com/maps/place/Open+Arena/@-7.1099195,-34.8592484,1086m/data=!3m2!1e3!4b1!4m6!3m5!1s0x7acddec175bc31b:0xbb6e239fe09972c7!8m2!3d-7.1099248!4d-34.8566735!16s%2Fg%2F11t0w6bw5n?authuser=0&entry=ttu&g_ep=EgoyMDI1MTAxMy4wIKXMDSoASAFQAw%3D%3D",
+                mapLink: "https://maps.app.goo.gl/rpDr7ujrTD9dr5RB8",
                 imageURL: "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?cb_client=maps_sv.tactile&w=900&h=600&pitch=2.944694354568554&panoid=bbfJ69cJrzICtqjpqNiLIA&yaw=208.1746396666018"
-            },
-            { 
-                name: "Vila Olímpica Parahyba", 
-                address: "R. Desportista Aurélio Rocha, S/N - Estados, João Pessoa", 
-                mapLink: "https://www.google.com/maps/place/Vila+Ol%C3%ADmpica+Parahyba/@-7.1115,-34.8521945,1086m/data=!3m2!1e3!4b1!4m6!3m5!1s0x7acdd44b95e2113:0x2c23407e7fc3d4a3!8m2!3d-7.1115053!4d-34.8496196!16s%2Fg%2F11b76h74q6?authuser=0&entry=ttu&g_ep=EgoyMDI1MTAxMy4wIKXMDSoASAFQAw%3D%3D",
-                imageURL: "https://www.google.com/maps/place/Vila+Ol%C3%ADmpica+Parahyba/@-7.1115053,-34.8496196,1086m/data=!3m1!1e3!4m6!3m5!1s0x7acdd44b95e2113:0x2c23407e7fc3d4a3!8m2!3d-7.1115053!4d-34.8496196!16s%2Fg%2F11b76h74q6?authuser=0&entry=ttu&g_ep=EgoyMDI1MTAxMy4wIKXMDSoASAFQAw%3D%3D"
             },
         ];
         
@@ -702,7 +696,7 @@
                 );
 
                 resultsDiv.appendChild(teamDiv);
-                
+              
 		setTimeout(function(td){
   		  return function(){
 			td.classList.add('show');
@@ -711,7 +705,275 @@
 			};
 		}(teamDiv), 50 * index);
             });
+
+
+            // ------------------------
+            // SALVAR DADOS PARA COMPARTILHAR
+            // ------------------------
+            // Coloca o objeto com o último sorteio para ser usado pelo botão Compartilhar
+            try {
+                // Monta uma versão serializável (não inclui funções)
+                var shareData = {
+                    date: (dateInput ? dateInput.value : ''),
+                    time: (timeInput ? timeInput.value : ''),
+                    addressName: (addressInput ? addressInput.dataset.selectedName || '' : ''),
+                    address: (addressInput ? addressInput.dataset.selectedAddress || '' : ''),
+                    mapLink: (addressInput ? addressInput.dataset.selectedLink || '' : ''),
+                    teams: teams // teams é um array de arrays de players (objetos simples) — serializável
+                };
+
+                // Expõe globalmente para o botão de compartilhar
+                window.Sorteio = window.Sorteio || {};
+                window.Sorteio.lastShared = shareData;
+            } catch (e) {
+                // silencioso, para não quebrar a UI
+                console.warn('Não foi possível preparar dados para compartilhamento', e);
+            } 
         }
+
+        // ====================================================
+        // Função pública para renderizar um sorteio compartilhado (modo somente leitura)
+        // ====================================================
+        window.Sorteio.renderShared = function (data) {
+            try {
+                console.log("RenderShared iniciado", data);
+
+                const resultsDiv = document.getElementById('results');
+                const mainInputCard = document.getElementById('main-input-card');
+                const mapCard = document.getElementById('map-card');
+                const dateInput = document.getElementById('date-input');
+                const timeInput = document.getElementById('time-input');
+                const addressInput = document.getElementById("address-input");
+
+                // ===============================
+                // MODO READ-ONLY
+                // ===============================
+                document.body.classList.add("view-only");
+
+                // Esconde o card principal (inputs dos jogadores)
+                if (mainInputCard) mainInputCard.style.display = "none";
+
+                // Esconde abas
+                const tabs = document.querySelector(".tabs");
+                if (tabs) tabs.style.display = "none";
+
+                // ===============================
+                // DATA / HORA (somente leitura)
+                //===============================
+                if (dateInput) dateInput.value = data.date || "";
+                // Atualiza o dia da semana (usa updateDayOfWeek se existir; fallback local se não)
+                if (typeof updateDayOfWeek === 'function') {
+                    try {
+                        updateDayOfWeek(data.date || '');
+                    } catch (e) {
+                        console.warn('updateDayOfWeek lançou erro:', e);
+                    }
+                } else {
+                    // fallback simples: tenta calcular dia da semana e inserir em elementos comuns
+                    try {
+                        var d = (data.date || '').trim(); // espera formato "DD/MM" ou "DD/MM/YYYY"
+                        if (d) {
+                            // tenta obter dia/mês/ano (se não vier o ano, usa o ano atual)
+                            var parts = d.split('/');
+                            var day = parseInt(parts[0], 10) || 1;
+                            var month = (parts.length > 1) ? (parseInt(parts[1], 10) - 1) : 0;
+                            var year = (parts.length > 2) ? parseInt(parts[2], 10) : (new Date()).getFullYear();
+
+                            var dt = new Date(year, month, day);
+                            if (!isNaN(dt.getTime())) {
+                                var weekdayNames = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+                                var weekdayText = weekdayNames[dt.getDay()];
+
+                                // tenta inserir em seletores comuns (se a sua UI tiver um elemento para isso)
+                                var possibleSelectors = ['#day-of-week', '#date-day', '.date-weekday', '.day-of-week', '#weekday'];
+                                var placed = false;
+                                possibleSelectors.forEach(function(sel){
+                                    if (placed) return;
+                                    var el = document.querySelector(sel);
+                                    if (el) {
+                                        el.textContent = weekdayText;
+                                        placed = true;
+                                    }
+                                });
+
+                                // se não encontrou elemento para colocar, cria um pequeno label ao lado do dateInput (não intrusivo)
+                                if (!placed && dateInput && dateInput.parentNode) {
+                                    var existing = dateInput.parentNode.querySelector('.shared-weekday-label');
+                                    if (!existing) {
+                                        var lab = document.createElement('div');
+                                        lab.className = 'shared-weekday-label';
+                                        //lab.style.fontSize = '0.95rem';
+                                        //lab.style.opacity = '0.85';
+                                        //lab.style.marginTop = '6px';
+                                        //lab.style.color = '#ECEDEF';
+                                        lab.textContent = weekdayText;
+                                        dateInput.parentNode.appendChild(lab);
+                                    } else {
+                                        existing.textContent = weekdayText;
+                                    }
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('fallback para dia da semana falhou:', e);
+                    }
+                }
+
+                if (timeInput) timeInput.value = data.time || "";
+
+                // Impede edição da data e hora no modo compartilhamento
+                if (dateInput) {
+                    dateInput.readOnly = true;
+                    dateInput.style.pointerEvents = "none";
+                    //dateInput.style.opacity = "0.7";
+                }
+
+                if (timeInput) {
+                    timeInput.readOnly = true;
+                    timeInput.style.pointerEvents = "none";
+                    //timeInput.style.opacity = "0.7";
+                }
+
+                // ===============================
+                // ENDEREÇO (somente leitura)
+                // ===============================
+                const sharedAddressBox = document.getElementById("shared-address-info");
+                const sharedAddressName = document.getElementById("shared-address-name");
+                const sharedAddressFull = document.getElementById("shared-address-full");
+
+                if (sharedAddressBox && sharedAddressName && sharedAddressFull) {
+                    sharedAddressName.textContent = data.addressName || "";
+                    sharedAddressFull.textContent = data.address || "";
+                    sharedAddressBox.style.display = "block";
+                }
+
+                // some com o input normal do endereço
+                if (addressInput) {
+                    addressInput.style.display = "none";
+                }
+
+                // Atualiza mapLink nos datasets (para manter botão funcionando)
+                if (addressInput) {
+                    addressInput.dataset.selectedName = data.addressName || "";
+                    addressInput.dataset.selectedAddress = data.address || "";
+                    addressInput.dataset.selectedLink = data.mapLink || "";
+                }
+
+                if (typeof updateMapButtonState === "function") {
+                    updateMapButtonState();
+                }
+
+                // ===============================
+                // RENDERIZAR TIMES
+                // ===============================
+                resultsDiv.innerHTML = ""; // limpa lista atual
+
+                const teamsToRender = data.teams || [];
+                resultsDiv.className = 'grid-' + (teamsToRender.length || 2);
+
+                const shuffledColors = shuffleArray(teamColors.slice());
+                const shuffledShields = shuffleArray(SHIELD_SVGS.slice());
+
+                teamsToRender.forEach(function (team, index) {
+
+                    const teamColorName = shuffledColors[index] || ("Cor " + (index + 1));
+                    const teamColorHex = colorMap[teamColorName] || "#ECEDEF";
+                    const shieldSVGPath = shuffledShields[index % shuffledShields.length];
+
+                    // Ordenação (goleiro primeiro + idade)
+                    const sortedTeamPlayers = team.slice().sort(function (a, b) {
+                        if (a.isGoalie && !b.isGoalie) return -1;
+                        if (!a.isGoalie && b.isGoalie) return 1;
+                        return b.age - a.age;
+                    });
+
+                    const onFieldPlayers = sortedTeamPlayers.slice(0, 5);
+                    const substitutes = sortedTeamPlayers.slice(5);
+
+                    // Goleiro temporário se necessário
+                    let designatedGoalie = null;
+                    let hasGoaliePlaced = false;
+
+                    if (!onFieldPlayers.some(p => p.isGoalie)) {
+                        const potential = onFieldPlayers.filter(p => p.age >= 15);
+                        if (potential.length > 0)
+                            designatedGoalie = shuffleArray(potential)[0];
+                    }
+
+                    const onFieldPlayersForDisplay = onFieldPlayers.map(player => {
+                        const copy = { ...player };
+
+                        if (!copy.isGoalie && player === designatedGoalie) {
+                            copy.isGoalie = true;
+                            copy.isTempGoalie = true;
+                        }
+
+                        if (copy.isGoalie && hasGoaliePlaced) {
+                            copy.isGoalie = false;
+                            copy.isBackupGoalie = true;
+                        } else if (copy.isGoalie) {
+                            hasGoaliePlaced = true;
+                        }
+
+                        return copy;
+                    });
+
+                    const teamDiv = document.createElement('div');
+                    teamDiv.className = "team show"; // já visível imediatamente
+                    teamDiv.innerHTML = createTeamCardHTML(
+                        team,
+                        teamColorName,
+                        teamColorHex,
+                        onFieldPlayersForDisplay,
+                        substitutes,
+                        shieldSVGPath
+                    );
+
+                    resultsDiv.appendChild(teamDiv);
+                });
+
+                // ======================================================
+                // ATIVA O CARROSSEL NO MODO COMPARTILHADO (MOBILE)
+                // ======================================================
+                try {
+                    if (window.innerWidth <= 768) {
+
+                        var carouselIndicators = document.getElementById('carousel-indicators');
+                        if (carouselIndicators) carouselIndicators.innerHTML = '';
+
+                        var totalTeams = teamsToRender.length;
+
+                        // Criar dots
+                        for (let i = 0; i < totalTeams; i++) {
+                            var dot = document.createElement('div');
+                            dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                            carouselIndicators.appendChild(dot);
+                        }
+
+                        var resultsContainer = document.getElementById('results');
+                        var dots = document.querySelectorAll('.carousel-dot');
+
+                        // Listener para atualizar o indicador ativo
+                        resultsContainer.addEventListener('scroll', function () {
+                            var scrollLeft = resultsContainer.scrollLeft;
+                            var cardWidth = resultsContainer.clientWidth;
+                            var activeIndex = Math.round(scrollLeft / cardWidth);
+
+                            dots.forEach((dot, idx) => {
+                                dot.classList.toggle('active', idx === activeIndex);
+                            });
+                        });
+                    }
+                } catch (e) {
+                    console.warn("Carrossel não pôde ser inicializado no modo compartilhado:", e);
+                }
+
+                console.log("renderShared finalizado — times renderizados:", teamsToRender.length);
+
+            } catch (err) {
+                console.error("Erro no renderShared:", err);
+            }
+        };
         
         // ====================================================
         // INICIALIZAÇÃO E EVENT LISTENERS
@@ -803,5 +1065,46 @@
             try { localStorage.removeItem('playerList'); } catch(e) {}
             resultsDiv.innerHTML = '';
         });
+        // Botão Compartilhar
+        var shareBtn = document.getElementById('share-btn');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', function() {
+                try {
+                    var payload = window.Sorteio && window.Sorteio.lastShared;
+                    if (!payload || !payload.teams || payload.teams.length === 0) {
+                        alert('Primeiro, gere um sorteio para poder compartilhar o resultado.');
+                        return;
+                    }
+
+                    // serializa em UTF-8 e codifica em Base64 URL-safe
+                    function encodeData(obj) {
+                        var json = JSON.stringify(obj);
+                        // UTF-8 safe base64
+                        var utf8 = unescape(encodeURIComponent(json));
+                        var b64 = btoa(utf8);
+                        return encodeURIComponent(b64);
+                    }
+
+                    var encoded = encodeData(payload);
+                    var shareLink = window.location.origin + window.location.pathname + '?share=' + encoded;
+
+                    // tenta copiar para clipboard
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(shareLink).then(function() {
+                            alert('🔗 Link copiado para a área de transferência!');
+                        }, function(err) {
+                            // fallback: mostra o link para o usuário copiar manualmente
+                            prompt('Copie o link abaixo:', shareLink);
+                        });
+                    } else {
+                        // fallback para navegadores antigos
+                        prompt('Copie o link abaixo:', shareLink);
+                    }
+                } catch (err) {
+                    console.error('Erro ao gerar link de compartilhamento:', err);
+                    alert('Ocorreu um erro ao gerar o link. Veja o console para detalhes.');
+                }
+            });
+        }
     }; // fim window.Sorteio.init
 }(window, document));

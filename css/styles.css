@@ -159,7 +159,7 @@ p {
     width: 100%;
     height: 1px;
     background-color: #6C7071; /* Cor da linha solicitada */
-    margin: 15px 0; /* Espaço entre a data/hora e o endereço/mapa */
+    margin: 12px 0; /* Espaço entre a data/hora e o endereço/mapa */
 }
 
 /* Estilo comum para os inputs de Data e Hora */
@@ -246,6 +246,20 @@ p {
     outline: none;
     font-family: 'Space Grotesk', sans-serif;
     font-weight: bold;
+}
+
+.shared-address-info {
+    width: 100%;
+    text-align: center;
+    margin: 10px 0 15px 0;
+    display: none;
+}
+#shared-address-name {
+    font-size: 18px;
+}
+#shared-address-full {
+    font-size: 14px;
+    color: #858787;
 }
 
 /* ==================================================== */
@@ -462,6 +476,26 @@ p {
 #clear-btn:hover {
     background-color: #2F3233;
 }
+
+#share-btn {
+    padding: 14px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 80px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Space Grotesk', sans-serif;
+    background-color: #4A56E2; /* cor do botão - ajuste se quiser */
+    color: #FFFFFF;
+    transition: background-color 0.15s ease, transform 0.08s ease;
+}
+
+#share-btn:hover {
+    background-color: #6C7BFF;
+}
+/* #share-btn:active {
+    transform: translateY(1px);
+} */
 
 /* ==================================================== */
 /* CARDS DE TIMES (GRID PADRÃO)                         */
@@ -782,7 +816,7 @@ li {
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
         gap: 12px;
-        padding: 0 0px 15px 0px; /* igual à .container */
+        padding: 0 0px 14px 0px; /* igual à .container */
         scroll-behavior: smooth;
     }
 
@@ -845,5 +879,68 @@ li {
     .carousel-dot.active {
         background-color: #ECEDEF;
         transform: scale(1.2);
+    }
+}
+
+/* MODO VISUALIZAÇÃO (LINK COMPARTILHADO) */
+/* Quando body tem a classe view-only (link compartilhado), esconde inputs e controles */
+body.view-only #main-input-card {
+    display: none !important;
+}
+body.view-only #buttons-container {
+    display: none !important;
+}
+#address-display {
+    text-align: center;
+    color: #ECEDEF;
+    margin-top: 8px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+body.view-only #main-content-row {
+    gap: 12px;
+    margin-top: 48px;
+    margin-bottom: 24px;
+}
+
+body.view-only #results {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    box-sizing: border-box;
+}
+
+body.view-only .team {
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+}
+
+body.view-only .results-title {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-top: 16px;
+    margin-bottom: 10px;
+    color: #ECEDEF;
+    font-size: 1.3rem;
+}
+
+/* Remove restrições que escondiam o container */
+body.view-only #results-container,
+body.view-only #results {
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+}
+
+@media (max-width: 768px) {
+    body.view-only #results {
+        display: flex !important;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 12px;
+        padding: 0 0px 14px 0px; /* igual à .container */
+        scroll-behavior: smooth;
     }
 }
