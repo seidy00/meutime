@@ -700,27 +700,26 @@
                 );
 
                 // Salva este time com posições e escalação exatas
+                function cleanPlayer(p) {
+                    return {
+                        name: String(p.name || ''),
+                        age: Number(isNaN(Number(p.age)) ? 0 : Number(p.age)),
+                        isGoalie: Boolean(p.isGoalie),
+                        isTempGoalie: Boolean(p.isTempGoalie),
+                        isBackupGoalie: Boolean(p.isBackupGoalie),
+                        finalPosition: (p.finalPosition ? String(p.finalPosition) : null)
+                    };
+                }
+
+                // monta um objeto 100% serializável para o time
                 exportedTeamsTemp.push({
-                    fullTeam: sortedTeamPlayers.map(p => ({ ...p })),
-                    colorName: teamColorName,
-                    colorHex: teamColorHex,
-                    shieldPath: shieldSVGPath,
+                    colorName: String(teamColorName || ''),
+                    colorHex: String(teamColorHex || ''),
+                    shieldPath: String(shieldSVGPath || ''),
 
-                    onField: onFieldPlayersForDisplay.map(p => ({
-                        name: p.name,
-                        age: p.age,
-                        isGoalie: p.isGoalie || false,
-                        isTempGoalie: p.isTempGoalie || false,
-                        isBackupGoalie: p.isBackupGoalie || false,
-                        finalPosition: p.finalPosition || null
-                    })),
-
-                    substitutes: substitutes.map(p => ({
-                        name: p.name,
-                        age: p.age,
-                        isGoalie: p.isGoalie || false,
-                        finalPosition: p.finalPosition || null
-                    }))
+                    fullTeam: sortedTeamPlayers.map(cleanPlayer),
+                    onField: onFieldPlayersForDisplay.map(cleanPlayer),
+                    substitutes: substitutes.map(cleanPlayer)
                 });
 
                 resultsDiv.appendChild(teamDiv);
@@ -739,19 +738,30 @@
             // SALVAR DADOS PARA COMPARTILHAR
             // ------------------------
             try {
+                window.Sorteio = window.Sorteio || {};
+
                 var shareData = {
                     date: (dateInput ? dateInput.value : ''),
                     time: (timeInput ? timeInput.value : ''),
                     addressName: (addressInput ? addressInput.dataset.selectedName || '' : ''),
                     address: (addressInput ? addressInput.dataset.selectedAddress || '' : ''),
                     mapLink: (addressInput ? addressInput.dataset.selectedLink || '' : ''),
-                    
-                    // ESTA É A PARTE IMPORTANTE:
-                    // usa exatamente os dados que você já salvou no loop!
                     teams: exportedTeamsTemp
                 };
 
+                // Define globalmente
                 window.Sorteio.lastShared = shareData;
+
+                // Também grava no localStorage como fallback (stringify seguro)
+                try {
+                    localStorage.setItem('lastShared', JSON.stringify(shareData));
+                } catch (e) {
+                    // localStorage pode falhar em modos restritos — não quebra a execução
+                    console.warn('Não foi possível salvar lastShared no localStorage:', e);
+                }
+
+                // Log de debug — confirma que foi salvo
+                console.log('[share-debug] lastShared definido, teams:', (shareData.teams || []).length);
 
             } catch (e) {
                 console.warn("Não foi possível preparar dados para compartilhamento", e);
@@ -1100,33 +1110,69 @@
             try { localStorage.removeItem('playerList'); } catch(e) {}
             resultsDiv.innerHTML = '';
         });
+
         // Botão Compartilhar
         var shareBtn = document.getElementById('share-btn');
         if (shareBtn) {
             shareBtn.addEventListener('click', function() {
                 try {
-                    var payload = window.Sorteio && window.Sorteio.lastShared;
+                    // tenta obter payload da variável global
+                    var payload = (window.Sorteio && window.Sorteio.lastShared) ? window.Sorteio.lastShared : null;
+
+                    // fallback: tenta ler do localStorage (caso o share tenha sido salvo lá anteriormente)
+                    if (!payload) {
+                        try {
+                            var ls = localStorage.getItem('lastShared');
+                            if (ls) {
+                                payload = JSON.parse(ls);
+                                console.log('[share-debug] payload carregado de localStorage como fallback');
+                            }
+                        } catch (e) {
+                            console.warn('[share-debug] falha ao ler lastShared do localStorage:', e);
+                        }
+                    }
+
                     if (!payload || !payload.teams || payload.teams.length === 0) {
                         alert('Primeiro, gere um sorteio para poder compartilhar o resultado.');
                         return;
                     }
 
-                    // serializa em UTF-8 e codifica em Base64 URL-safe
+                    // Função segura para gerar string compactada com LZString
                     function encodeData(obj) {
-                        var json = JSON.stringify(obj);
-                        // UTF-8 safe base64
-                        var utf8 = unescape(encodeURIComponent(json));
-                        var b64 = btoa(utf8);
-                        return encodeURIComponent(b64);
+                        // 1) forçar uma cópia limpa (remove funções e referências circulares simples)
+                        var clean;
+                        try {
+                            clean = JSON.parse(JSON.stringify(obj));
+                        } catch (e) {
+                            console.warn('Falha ao clonar payload (JSON). Tentando usar o objeto original:', e);
+                            clean = obj; // fallback — tentaremos mesmo assim (mas pode falhar)
+                        }
+
+                        // 2) garantir que é string antes de compactar
+                        var json = (typeof clean === 'string') ? clean : JSON.stringify(clean);
+
+                        // Debug: mostra se a string está ok
+                        try {
+                            console.log('[share-debug] JSON length:', json.length);
+                            console.log('[share-debug] JSON head:', json.slice(0, 200));
+                        } catch (e) {
+                            console.warn('[share-debug] não foi possível logar JSON:', e);
+                        }
+
+                        // 3) compacta para Base64 usando LZString
+                        var compressed = LZString.compressToBase64(json);
+
+                        // 4) protege para URL
+                        return encodeURIComponent(compressed);
                     }
 
                     var encoded = encodeData(payload);
-                    var shareLink = window.location.origin + window.location.pathname + '?share=' + encoded;
+                    var shareLink = window.location.origin + window.location.pathname + '?d=' + encoded;
 
                     // tenta copiar para clipboard
                     if (navigator.clipboard && navigator.clipboard.writeText) {
                         navigator.clipboard.writeText(shareLink).then(function() {
-                            alert('Link copiado para a área de transferência!');
+                            alert('🔗 Link copiado para a área de transferência!');
                         }, function(err) {
                             // fallback: mostra o link para o usuário copiar manualmente
                             prompt('Copie o link abaixo:', shareLink);
@@ -1135,6 +1181,7 @@
                         // fallback para navegadores antigos
                         prompt('Copie o link abaixo:', shareLink);
                     }
+
                 } catch (err) {
                     console.error('Erro ao gerar link de compartilhamento:', err);
                     alert('Ocorreu um erro ao gerar o link. Veja o console para detalhes.');

@@ -25,57 +25,59 @@
         }
 
         // Detecta parâmetro de compartilhamento na URL e renderiza o resultado em modo somente leitura
-        try {
-            const params = new URLSearchParams(window.location.search);
-            if (!params.has('share')) return; // se não há parâmetro "share", sai
-
-            const encoded = params.get('share');
-            if (!encoded) return;
-
-            // Decodifica URL + Base64 + UTF-8
-            let decodedJson;
+        (function handleSharedLink() {
             try {
-                const b64 = decodeURIComponent(encoded);
-                const json = decodeURIComponent(escape(atob(b64)));
-                decodedJson = json;
-            } catch (err) {
-                console.warn('Decodificação primária falhou, tentando alternativa:', err);
-                try {
-                    decodedJson = atob(encoded);
-                } catch (e2) {
-                    console.error('Falha ao decodificar link de compartilhamento:', e2);
+
+                const params = new URLSearchParams(window.location.search);
+                if (!params.has('d')) {
+                    console.log('Nenhum parâmetro de compartilhamento encontrado.');
                     return;
                 }
-            }
 
-            let sharedData = null;
-            try {
-                sharedData = JSON.parse(decodedJson);
-            } catch (err) {
-                console.error('Erro ao parsear JSON do compartilhamento:', err);
-                return;
-            }
+                const encoded = params.get('d');
+                if (!encoded) return;
 
-            console.log('🔗 Modo compartilhamento detectado — dados decodificados:', sharedData);
+                console.log('Parâmetro recebido:', encoded.slice(0, 30) + '...');
 
-            // Garante que a aba "Equilibrado" esteja ativa
-            const equilibradoTabBtn = document.querySelector('.tab-button[data-tab="equilibrado"]');
-            if (equilibradoTabBtn) equilibradoTabBtn.click();
-
-            // Aguarda a função renderShared estar pronta
-            const waitForRender = setInterval(() => {
-                if (window.Sorteio && typeof window.Sorteio.renderShared === 'function') {
-                    clearInterval(waitForRender);
-                    console.log('🔄 renderShared disponível, renderizando sorteio compartilhado...');
-                    window.Sorteio.renderShared(sharedData);
+                // Decodifica
+                let jsonString = "";
+                try {
+                    const decompressed = LZString.decompressFromBase64(decodeURIComponent(encoded));
+                    jsonString = decompressed;
+                } catch (err) {
+                    console.error('Erro ao descomprimir LZString:', err);
+                    return;
                 }
-            }, 200);
 
-            // Segurança: para o loop após 5s
-            setTimeout(() => clearInterval(waitForRender), 5000);
-        } catch (err) {
-            console.error('Erro ao processar parâmetro de compartilhamento:', err);
-        }
+                let sharedData = null;
+                try {
+                    sharedData = JSON.parse(jsonString);
+                } catch (err) {
+                    console.error('Erro ao parsear JSON descomprimido:', err);
+                    return;
+                }
+
+                console.log("Dados de compartilhamento decodificados:", sharedData);
+
+                // Seleciona a aba "Equilibrado", caso exista
+                const eqTab = document.querySelector('.tab-button[data-tab="equilibrado"]');
+                if (eqTab) eqTab.click();
+
+                // Aguarda o renderShared ficar disponível (draw.js carregado)
+                const wait = setInterval(() => {
+                    if (window.Sorteio && typeof window.Sorteio.renderShared === 'function') {
+                        clearInterval(wait);
+                        console.log("Chamando renderShared...");
+                        window.Sorteio.renderShared(sharedData);
+                    }
+                }, 150);
+
+                setTimeout(() => clearInterval(wait), 5000);
+
+            } catch (err) {
+                console.error('Erro geral ao processar link compartilhado:', err);
+            }
+        })();
     });
 
 // CONTROLE DAS ABAS
