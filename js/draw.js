@@ -10,7 +10,6 @@
     window.Sorteio = window.Sorteio || {};
 
     window.Sorteio.init = function() {
-        // === Copiado e adaptado do script original, sem alterações lógicas ===
         // ====================================================
         // VARIÁVEIS DE CONFIGURAÇÃO E CONSTANTES
         // ====================================================
@@ -71,7 +70,6 @@
         // ====================================================
         // FUNÇÕES DE UTILIDADE
         // ====================================================
-        
         /** Embaralha um array (Algoritmo Fisher-Yates). */
         function shuffleArray(array) {
             for (var i = array.length - 1; i > 0; i--) {
@@ -128,7 +126,6 @@
         // ====================================================
         // FUNÇÕES DE DATA/HORA
         // ====================================================
-        
         /** Calcula e exibe o dia da semana a partir da string DD/MM. */
         function updateDayOfWeek(dateString) {
             var parts = dateString.split('/');
@@ -368,16 +365,21 @@
             
             onFieldPlayersForDisplay.forEach(function(player) {
                 var positionClass;
-                if (player.isGoalie) { 
+
+                if (player.isGoalie) {
                     positionClass = 'pos-gk';
                 } else {
                     if (fieldPlayerPositionIndex < availablePositions.length) {
                         positionClass = availablePositions[fieldPlayerPositionIndex];
                         fieldPlayerPositionIndex++;
                     } else {
-                        positionClass = 'pos-a-c'; // Fallback
+                        positionClass = 'pos-a-c';
                     }
                 }
+
+                // SALVA A POSIÇÃO NO OBJETO DO JOGADOR
+                player.finalPosition = positionClass;
+
                 pitchHTML += createPlayerMarkerHTML(player, teamColorHex, positionClass);
             });
             
@@ -385,7 +387,7 @@
 
             var substitutesHTML = substitutes.map(function(p){ return createSubstituteHTML(p, teamColorHex); }).join('');
 
-            return '\n\t\t<div class="team-header">\n\t\t\t<div class="name-and-color">\n\t\t\t\t<svg class="team-shield" viewBox="0 0 150 150" style="fill: ' + teamColorHex + '; stroke: #ECEDEF; stroke-width: 0;">\n\t\t\t\t\t' + shieldSVGPath + '\n\t\t\t\t</svg>\n\t\t\t\t' + teamColorName + '\n\t\t\t</div>\n\t\t\t<div class="info-text">\n                        <strong>' + team.length + ' Jogadores</strong><br>\n                        Idade média: ' + avgAge + ' anos\n                    </div>\n                </div>\n                <div class="pitch-container">\n                    ' + pitchHTML + '\n                </div>\n                <div class="substitutes-section">\n                    <h4>Substituições <span class="count">(' + substitutes.length + ' jogador' + (substitutes.length !== 1 ? 'es' : '') + ')</span></h4>\n                    <ul class="substitutes-list">\n                        ' + substitutesHTML + '\n                    </ul>\n                </div>\n            ';
+            return '\n\t\t<div class="team-header">\n\t\t\t<div class="name-and-color">\n\t\t\t\t<svg class="team-shield" viewBox="0 0 150 150" style="fill: ' + teamColorHex + '; stroke: #ECEDEF; stroke-width: 0;">\n\t\t\t\t\t' + shieldSVGPath + '\n\t\t\t\t</svg>\n\t\t\t\t' + teamColorName + '\n\t\t\t</div>\n\t\t\t<div class="info-text">\n   <strong>' + team.length + ' Jogadores</strong><br>\n   Idade média: ' + avgAge + ' anos\n   </div>\n   </div>\n   <div class="pitch-container">\n   ' + pitchHTML + '\n   </div>\n   <div class="substitutes-section">\n   <h4>Substituições <span class="count">(' + substitutes.length + ' jogador' + (substitutes.length !== 1 ? 'es' : '') + ')</span></h4>\n   <ul class="substitutes-list">\n   ' + substitutesHTML + '\n   </ul>\n   </div>\n   ';
         }
 
         // ====================================================
@@ -425,6 +427,8 @@
             var oldPlayers = fieldPlayers.filter(function(p){ return p.age > 20; });
             var teens = fieldPlayers.filter(function(p){ return p.age >= 15 && p.age <= 19; });
             var kids = fieldPlayers.filter(function(p){ return p.age <= 14; });
+
+            var exportedTeamsTemp = [];
 
             // 1. Sorteio de Goleiros
             shuffleArray(goalies);
@@ -695,6 +699,30 @@
                     shieldSVGPath 
                 );
 
+                // Salva este time com posições e escalação exatas
+                exportedTeamsTemp.push({
+                    fullTeam: sortedTeamPlayers.map(p => ({ ...p })),
+                    colorName: teamColorName,
+                    colorHex: teamColorHex,
+                    shieldPath: shieldSVGPath,
+
+                    onField: onFieldPlayersForDisplay.map(p => ({
+                        name: p.name,
+                        age: p.age,
+                        isGoalie: p.isGoalie || false,
+                        isTempGoalie: p.isTempGoalie || false,
+                        isBackupGoalie: p.isBackupGoalie || false,
+                        finalPosition: p.finalPosition || null
+                    })),
+
+                    substitutes: substitutes.map(p => ({
+                        name: p.name,
+                        age: p.age,
+                        isGoalie: p.isGoalie || false,
+                        finalPosition: p.finalPosition || null
+                    }))
+                });
+
                 resultsDiv.appendChild(teamDiv);
               
 		setTimeout(function(td){
@@ -710,25 +738,24 @@
             // ------------------------
             // SALVAR DADOS PARA COMPARTILHAR
             // ------------------------
-            // Coloca o objeto com o último sorteio para ser usado pelo botão Compartilhar
             try {
-                // Monta uma versão serializável (não inclui funções)
                 var shareData = {
                     date: (dateInput ? dateInput.value : ''),
                     time: (timeInput ? timeInput.value : ''),
                     addressName: (addressInput ? addressInput.dataset.selectedName || '' : ''),
                     address: (addressInput ? addressInput.dataset.selectedAddress || '' : ''),
                     mapLink: (addressInput ? addressInput.dataset.selectedLink || '' : ''),
-                    teams: teams // teams é um array de arrays de players (objetos simples) — serializável
+                    
+                    // ESTA É A PARTE IMPORTANTE:
+                    // usa exatamente os dados que você já salvou no loop!
+                    teams: exportedTeamsTemp
                 };
 
-                // Expõe globalmente para o botão de compartilhar
-                window.Sorteio = window.Sorteio || {};
                 window.Sorteio.lastShared = shareData;
+
             } catch (e) {
-                // silencioso, para não quebrar a UI
-                console.warn('Não foi possível preparar dados para compartilhamento', e);
-            } 
+                console.warn("Não foi possível preparar dados para compartilhamento", e);
+            }
         }
 
         // ====================================================
@@ -910,58 +937,30 @@
                 const shuffledColors = shuffleArray(teamColors.slice());
                 const shuffledShields = shuffleArray(SHIELD_SVGS.slice());
 
-                teamsToRender.forEach(function (team, index) {
+                teamsToRender.forEach(function(teamObj, index) {
 
-                    const teamColorName = shuffledColors[index] || ("Cor " + (index + 1));
-                    const teamColorHex = colorMap[teamColorName] || "#ECEDEF";
-                    const shieldSVGPath = shuffledShields[index % shuffledShields.length];
+                    const teamColorName = teamObj.colorName;
+                    const teamColorHex = teamObj.colorHex;
+                    const shieldSVGPath = teamObj.shieldPath;
 
-                    // Ordenação (goleiro primeiro + idade)
-                    const sortedTeamPlayers = team.slice().sort(function (a, b) {
-                        if (a.isGoalie && !b.isGoalie) return -1;
-                        if (!a.isGoalie && b.isGoalie) return 1;
-                        return b.age - a.age;
-                    });
-
-                    const onFieldPlayers = sortedTeamPlayers.slice(0, 5);
-                    const substitutes = sortedTeamPlayers.slice(5);
-
-                    // Goleiro temporário se necessário
-                    let designatedGoalie = null;
-                    let hasGoaliePlaced = false;
-
-                    if (!onFieldPlayers.some(p => p.isGoalie)) {
-                        const potential = onFieldPlayers.filter(p => p.age >= 15);
-                        if (potential.length > 0)
-                            designatedGoalie = shuffleArray(potential)[0];
-                    }
-
-                    const onFieldPlayersForDisplay = onFieldPlayers.map(player => {
-                        const copy = { ...player };
-
-                        if (!copy.isGoalie && player === designatedGoalie) {
-                            copy.isGoalie = true;
-                            copy.isTempGoalie = true;
-                        }
-
-                        if (copy.isGoalie && hasGoaliePlaced) {
-                            copy.isGoalie = false;
-                            copy.isBackupGoalie = true;
-                        } else if (copy.isGoalie) {
-                            hasGoaliePlaced = true;
-                        }
-
-                        return copy;
-                    });
+                    const onFieldPlayers = teamObj.onField || [];
+                    const substitutes = teamObj.substitutes || [];
+                    const fullTeam = teamObj.fullTeam || [];
 
                     const teamDiv = document.createElement('div');
-                    teamDiv.className = "team show"; // já visível imediatamente
-                    teamDiv.innerHTML = createTeamCardHTML(
-                        team,
+                    teamDiv.className = "team show";
+
+                    const playersForCard = [
+                        ...onFieldPlayers,
+                        ...substitutes
+                    ];
+
+                    teamDiv.innerHTML = createTeamCardHTML_SHARED(
+                        playersForCard,
                         teamColorName,
                         teamColorHex,
-                        onFieldPlayersForDisplay,
-                        substitutes,
+                        onFieldPlayers,   // estes têm finalPosition
+                        substitutes,      // reservas
                         shieldSVGPath
                     );
 
@@ -1127,7 +1126,7 @@
                     // tenta copiar para clipboard
                     if (navigator.clipboard && navigator.clipboard.writeText) {
                         navigator.clipboard.writeText(shareLink).then(function() {
-                            alert('🔗 Link copiado para a área de transferência!');
+                            alert('Link copiado para a área de transferência!');
                         }, function(err) {
                             // fallback: mostra o link para o usuário copiar manualmente
                             prompt('Copie o link abaixo:', shareLink);
@@ -1141,6 +1140,58 @@
                     alert('Ocorreu um erro ao gerar o link. Veja o console para detalhes.');
                 }
             });
+        }
+
+        function createTeamCardHTML_SHARED(fullTeam, teamColorName, teamColorHex, onFieldPlayers, substitutes, shieldSVGPath) {
+
+        var totalAge = fullTeam.reduce((s,p)=>s+p.age,0);
+        var avgAge = (fullTeam.length ? (totalAge / fullTeam.length).toFixed(1) : 'N/A');
+
+        var pitchHTML = `
+            <div class="football-pitch">
+                <div class="line-top"></div>
+                <div class="penalty-box"></div>
+                <div class="six-yard-box"></div>
+                <div class="penalty-spot"></div>
+                <div class="center-circle"></div>
+                <div class="penalty-arc"></div>
+        `;
+
+        onFieldPlayers.forEach(player => {
+            pitchHTML += createPlayerMarkerHTML(player, teamColorHex, player.finalPosition);
+        });
+
+        pitchHTML += '</div>';
+
+        var substitutesHTML = substitutes
+            .map(p => createSubstituteHTML(p, teamColorHex))
+            .join('');
+
+        return `
+            <div class="team-header">
+                <div class="name-and-color">
+                    <svg class="team-shield" viewBox="0 0 150 150" style="fill: ${teamColorHex};">
+                        ${shieldSVGPath}
+                    </svg>
+                    ${teamColorName}
+                </div>
+                <div class="info-text">
+                    <strong>${fullTeam.length} Jogadores</strong><br>
+                    Idade média: ${avgAge} anos
+                </div>
+            </div>
+
+            <div class="pitch-container">
+                ${pitchHTML}
+            </div>
+
+            <div class="substitutes-section">
+                <h4>Substituições <span class="count">(${substitutes.length} jogador${substitutes.length !== 1 ? 'es' : ''})</span></h4>
+                <ul class="substitutes-list">
+                    ${substitutesHTML}
+                </ul>
+            </div>
+        `;
         }
     }; // fim window.Sorteio.init
 }(window, document));
