@@ -9,135 +9,133 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-    <div class="top-section">
-        <div class="container">
-            <h1>Meu Time</h1>
-
-            <div class="tabs">
-        <button class="tab-button active" data-tab="equilibrado">Equilibrado</button>
-        <button class="tab-button" data-tab="livre">Livre</button>
-    </div>
-</div>
-
-        </div>
-    </div>
-    
-<!-- Conteúdo das abas -->
-<div class="tab-content" id="tab-equilibrado">
-        <div class="container">
-        <div id="main-content-row">
-            
-            <div id="main-input-card">
-                <div id="player-input-area">
-                    <p>
-                        Adicione no campo abaixo os nomes dos jogadores da seguinte maneira: 
-                        <br>
-                        <strong>Nome, idade</strong>
-                        <br>
-                        <br>
-                        Se o jogador puder jogar no gol:
-                        <br>
-                        <strong>Nome, idade, G</strong>
-                    </p>
-                    <textarea id="players-textarea" placeholder="João, 19
-Pedro, 21, G
-Felipe, 16"></textarea>
-                </div>
-                
-                <div id="stats-container" class="stats-bar">
-                    <span id="player-count-stats">0 Jogadores • 0 Goleiros</span>
-                    <span id="avg-age-stats">Idade Média: N/A</span>
-                </div>
-                
-                <div class="controls">
-                    <button id="draw-btn">Sortear Times</button>
-                    <button id="clear-btn">Limpar Lista</button>
-                    <button id="share-btn" title="Compartilhar resultado" aria-label="Compartilhar resultado">Compartilhar</button>
-                </div>
+    <body>
+        <div class="top-section top">
+            <div class="container">
+                <h1>Meu Time</h1>
             </div>
-            
-            <div id="map-card">
-                <div id="map-header-new"> 
-                    <span id="day-of-week-display"></span> 
-                    <input type="text" id="date-input" placeholder="DD/MM" maxlength="5">
-                    <input type="text" id="time-input" placeholder="HH:MM" maxlength="5">
-                </div>
-                
-                <div class="separator-line"></div>
-
-                <div id="shared-address-info">
-                    <strong id="shared-address-name"></strong><br>
-                    <span id="shared-address-full"></span>
-                </div>
-                
-                <div id="address-input-container">
-                    <input type="text" id="address-input" placeholder="Selecione um endereço" autocomplete="off" readonly>
-                    
-                    <div id="custom-address-dropdown">
+        </div>
+        <div class="top-section bottom">
+            <div class="container">
+                <div class="card config-card">
+                    <!-- <h2>Configurações do Sorteio</h2> -->
+                    <div class="config-row">
+                        <div class="input-group-potes">
+                            <div><label>SORTEIO</label></div>
+                            <div class="custom-select-container" id="numPotesSelect">
+                                <div class="select-selected">
+                                    <span id="selectedPotes">1 Pote</span>
+                                    <svg class="dropdown-arrow" viewBox="0 0 40 20" fill="none">
+                                        <path d="M40,2.8l-20,20L0,2.8,2.85,0l17.15,17.15L37.15,0l2.85,2.8Z"></path>
+                                    </svg>
+                                </div>
+                                <div class="select-items hidden">
+                                    <div data-value="1">1 Pote</div>
+                                    <div data-value="2">2 Potes</div>
+                                    <div data-value="3">3 Potes</div>
+                                    <div data-value="4">4 Potes</div>
+                                </div>
+                            </div>
+                            <div>
+                                <p>
+                                    Os potes servem para o sorteio realizar uma distribuição melhor entre os times.
+                                </p>
+                                <p>
+                                    Os jogadores que estiverem no mesmo pote serão sorteados em times diferentes, sendo exceção em cenários em que há menos times que a quantidade de jogadores daquele pote.
+                                </p>
+                            </div>
                         </div>
+                        <div class="input-group-teams">
+                            <div><label>TIMES</label></div>
+                                <div class="custom-select-container" id="numTeamsSelect">
+                                    <div class="select-selected">
+                                        <span id="selectedTeams">2</span>
+                                        <svg class="dropdown-arrow" viewBox="0 0 40 20">
+                                            <path d="M40,2.8l-20,20L0,2.8,2.85,0l17.15,17.15L37.15,0l2.85,2.8Z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="select-items hidden">
+                                        <div data-value="2">2 Times</div>
+                                        <div data-value="3">3 Times</div>
+                                        <div data-value="4">4 Times</div>
+                                        <div data-value="5">5 Times</div>
+                                        <div data-value="6">6 Times</div>
+                                        <div data-value="7">7 Times</div>
+                                        <div data-value="8">8 Times</div>
+                                    </div>
+                                </div>
+                            <div class="line"></div>
+                            <div id="colorPickerContainer">
+                                <div class="input-group-colors">
+                                    <div><label>CORES</label></div>
+                                    <div class="selected-colors"><label>0</label></div>
+                                </div>
+                                <div id="teamColorsGrid" class="colors-grid"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div id="map-image-container">
-                    <img id="map-image" alt="Imagem do local selecionado">
-                    <div class="image-placeholder">Imagem do local não disponível ou não carregada.</div>
-                </div>
-
-                <button id="open-map-btn" disabled>Abrir no Google Maps</button>
             </div>
         </div>
-    </div>
 
-    <div class="results-wrapper" style="padding: 0 20px 0 20px;">
-        <div id="results-header">
+        <div id="potesContainer" class="potes-container">
+
+                <div class="potes-row">
+                    <div class="pote-column" id="poteArea1">
+                        <label>POTE 1</label>
+                        <textarea id="pote1" placeholder="Nome"></textarea>
+                        <div class="pote-controls">
+                            <span id="count-pote1" class="player-count-label">0 jogadores</span>
+                            <button class="btn-clear" onclick="limparPote('pote1')">Limpar</button>
+                        </div>
+                    </div>
+                    <div class="pote-column hidden" id="poteArea2">
+                        <label>POTE 2</label>
+                        <textarea id="pote2" placeholder="Nome"></textarea>
+                        <div class="pote-controls">
+                            <span id="count-pote2" class="player-count-label">0 jogadores</span>
+                            <button class="btn-clear" onclick="limparPote('pote2')">Limpar</button>
+                        </div>
+                    </div>
+                    <div class="pote-column hidden" id="poteArea3">
+                        <label>POTE 3</label>
+                        <textarea id="pote3" placeholder="Nome"></textarea>
+                        <div class="pote-controls">
+                            <span id="count-pote3" class="player-count-label">0 jogadores</span>
+                            <button class="btn-clear" onclick="limparPote('pote3')">Limpar</button>
+                        </div>
+                    </div>
+                    <div class="pote-column hidden" id="poteArea4">
+                        <label>POTE 4</label>
+                        <textarea id="pote4" placeholder="Nome"></textarea>
+                        <div class="pote-controls">
+                            <span id="count-pote4" class="player-count-label">0 jogadores</span>
+                            <button class="btn-clear" onclick="limparPote('pote4')">Limpar</button>
+                        </div>
+                    </div>
+                </div>
+
         </div>
-        
-        <div id="results">
+        <div id="potesDots" class="carousel-dots"></div>
+
+        <div class="Btn-container">
+            <div class="actions-row">
+                <div class="drawdiv">
+                    <button id="btnFullDraw" class="btn-primary">Sortear Tudo</button>
+                    <button id="btnSingleDraw" class="btn-secondary">Sortear 1 Jogador</button>
+                    <button id="btnPoteDraw" class="btn-secondary" >Sortear Pote</button>
+                </div>
+                <div class="shareresetdiv">
+                    <button id="btnShare">Compartilhar</button>
+                    <button id="btnReset" onclick="resetarTudo()">Reiniciar Sorteio</button>
+                </div>
             </div>
-        
-        <div id="carousel-indicators"></div>
-    </div>
-
-    <div class="explanation-box">
-    <div class="explanation-section">
-        <div class="explanation-content">
-            <h2>Como Funciona o Sorteio</h2>
-            <p>A lógica do sorteio, embora pareça simples por fora, foi construída com vários critérios para garantir o máximo de equilíbrio entre os times.</p>
         </div>
-        <div class="explanation-content-right">
-            <h2>Critérios de Sorteio:</h2>
-            <ol>
-                <li>Separação dos Jogadores: Primeiro, todos os jogadores são lidos da sua lista e separados em quatro grupos principais: Goleiros, Jogadores Mais Velhos (acima de 20 anos), Adolescentes (entre 15 e 19 anos) e Crianças (14 anos ou menos).</li>
-                <li>Sorteio de Goleiros: Os goleiros são os primeiros a serem distribuídos. O programa coloca um goleiro em cada time, até que todos os times tenham um ou todos os goleiros tenham sido alocados.</li>
-                <li>Equilíbrio de Experiência: Em seguida, os jogadores mais velhos são distribuídos. Eles são alocados com um cuidado extra, para equilibrar a experiência entre as equipes.</li>
-                <li>Distribuição em Zig-Zag: Para os grupos de adolescentes e crianças, o programa usa um método de distribuição em "zig-zag" para garantir que a idade seja bem espalhada entre as equipes.</li>
-                <li>Ajuste Final (Balanceamento de Tamanho): Após distribuir todos os jogadores, o programa faz um ajuste final para balancear a quantidade de jogadores. Para a maioria dos casos, a diferença máxima é de 1 jogador (ex: 5, 4, 4).</li>
-            </ol>
+
+        <div id="resultsDiv" class="results-container">
         </div>
-    </div>
-    </div>
-</div>
+        <div id="resultsDots" class="carousel-dots"></div>
 
-<div class="tab-content hidden" id="tab-livre">
-    <div class="free-draw">
-        <h2>Modo Livre</h2>
-        <p>Essa área será configurada em breve para um sorteio sem balanceamento.</p>
-    </div>
-</div>
-
-<div class="baseboard-box">
-    <div class="baseboard">
-        <div class="baseboard-column">Criado por Seidy</div>
-        <div class="baseboard-column">Design baseado no Sofascore</div>
-        <div class="baseboard-column">ver 9.7.1</div>
-    </div>
-</div>
-
-<script>
-    var LZString=function(){function o(o,r){if(!t[o]){t[o]={};for(var n=0;n<o.length;n++)t[o][o.charAt(n)]=n}return t[o][r]}var r=String.fromCharCode,n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",e="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$",t={},i={compressToBase64:function(o){if(null==o)return"";var r=i._compress(o,6,function(o){return n.charAt(o)});switch(r.length%4){default:case 0:return r;case 1:return r+"===";case 2:return r+"==";case 3:return r+"="}},decompressFromBase64:function(r){return null==r?"":""==r?null:i._decompress(r.length,32,function(e){return o(n,r.charAt(e))})},compressToUTF16:function(o){return null==o?"":i._compress(o,15,function(o){return r(o+32)})+" "},decompressFromUTF16:function(o){return null==o?"":""==o?null:i._decompress(o.length,16384,function(r){return o.charCodeAt(r)-32})},compressToUint8Array:function(o){for(var r=i.compress(o),n=new Uint8Array(2*r.length),e=0,t=r.length;t>e;e++){var s=r.charCodeAt(e);n[2*e]=s>>>8,n[2*e+1]=s%256}return n},decompressFromUint8Array:function(o){if(null===o||void 0===o)return i.decompress(o);for(var n=new Array(o.length/2),e=0,t=n.length;t>e;e++)n[e]=256*o[2*e]+o[2*e+1];var s=[];return n.forEach(function(o){s.push(r(o))}),i.decompress(s.join(""))},compressToEncodedURIComponent:function(o){return null==o?"":i._compress(o,6,function(o){return e.charAt(o)})},decompressFromEncodedURIComponent:function(r){return null==r?"":""==r?null:(r=r.replace(/ /g,"+"),i._decompress(r.length,32,function(n){return o(e,r.charAt(n))}))},compress:function(o){return i._compress(o,16,function(o){return r(o)})},_compress:function(o,r,n){if(null==o)return"";var e,t,i,s={},p={},u="",c="",a="",l=2,f=3,h=2,d=[],m=0,v=0;for(i=0;i<o.length;i+=1)if(u=o.charAt(i),Object.prototype.hasOwnProperty.call(s,u)||(s[u]=f++,p[u]=!0),c=a+u,Object.prototype.hasOwnProperty.call(s,c))a=c;else{if(Object.prototype.hasOwnProperty.call(p,a)){if(a.charCodeAt(0)<256){for(e=0;h>e;e++)m<<=1,v==r-1?(v=0,d.push(n(m)),m=0):v++;for(t=a.charCodeAt(0),e=0;8>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;h>e;e++)m=m<<1|t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=a.charCodeAt(0),e=0;16>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}l--,0==l&&(l=Math.pow(2,h),h++),delete p[a]}else for(t=s[a],e=0;h>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;l--,0==l&&(l=Math.pow(2,h),h++),s[c]=f++,a=String(u)}if(""!==a){if(Object.prototype.hasOwnProperty.call(p,a)){if(a.charCodeAt(0)<256){for(e=0;h>e;e++)m<<=1,v==r-1?(v=0,d.push(n(m)),m=0):v++;for(t=a.charCodeAt(0),e=0;8>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;h>e;e++)m=m<<1|t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=a.charCodeAt(0),e=0;16>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}l--,0==l&&(l=Math.pow(2,h),h++),delete p[a]}else for(t=s[a],e=0;h>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;l--,0==l&&(l=Math.pow(2,h),h++)}for(t=2,e=0;h>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;for(;;){if(m<<=1,v==r-1){d.push(n(m));break}v++}return d.join("")},decompress:function(o){return null==o?"":""==o?null:i._decompress(o.length,32768,function(r){return o.charCodeAt(r)})},_decompress:function(o,n,e){var t,i,s,p,u,c,a,l,f=[],h=4,d=4,m=3,v="",w=[],A={val:e(0),position:n,index:1};for(i=0;3>i;i+=1)f[i]=i;for(p=0,c=Math.pow(2,2),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;switch(t=p){case 0:for(p=0,c=Math.pow(2,8),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;l=r(p);break;case 1:for(p=0,c=Math.pow(2,16),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;l=r(p);break;case 2:return""}for(f[3]=l,s=l,w.push(l);;){if(A.index>o)return"";for(p=0,c=Math.pow(2,m),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;switch(l=p){case 0:for(p=0,c=Math.pow(2,8),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;f[d++]=r(p),l=d-1,h--;break;case 1:for(p=0,c=Math.pow(2,16),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;f[d++]=r(p),l=d-1,h--;break;case 2:return w.join("")}if(0==h&&(h=Math.pow(2,m),m++),f[l])v=f[l];else{if(l!==d)return null;v=s+s.charAt(0)}w.push(v),f[d++]=s+v.charAt(0),h--,s=v,0==h&&(h=Math.pow(2,m),m++)}}};return i}();"function"==typeof define&&define.amd?define(function(){return LZString}):"undefined"!=typeof module&&null!=module&&(module.exports=LZString);
-</script>
-
-<script src="js/draw.js"></script>
-<script src="js/main.js"></script>
-</body>
+        <script type="module" src="index.js"></script>
+    </body>
 </html>
