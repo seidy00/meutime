@@ -10,8 +10,7 @@ window.Sorteio = window.Sorteio || {};
 window.Sorteio.init = function() {
     console.log("DOM carregado e Sorteio.init executado!");
 
-    const numPotesSelect = document.getElementById('numPotesSelect');
-    const numTeamsSelect = document.getElementById('numTeamsSelect');
+    const resultsArea = document.getElementById('resultsDiv');
     const colorsGrid = document.getElementById('teamColorsGrid');
 
     function configurarDropdown(containerId, textId, stateKey, callback) {
@@ -174,11 +173,16 @@ window.Sorteio.init = function() {
 
             alternarBloqueioConfiguracao(true); //Bloqueia as opções (Qtd. time, Qtd. Potes e cores) durante o sorteio
             renderTeams(State.teams);
-            faseSorteio = "sortear"; 
+            faseSorteio = "sortear";
+            scrollParaResultados();
 
             return false; //RETORNA FALSE: Indica que apenas "preparou", não deve sortear ainda
         }
         return State.drawQueue.length > 0;
+    }
+
+    function scrollParaResultados() {
+        resultsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     // --- FUNÇÃO PARA SORTEAR TUDO ---
@@ -196,6 +200,7 @@ window.Sorteio.init = function() {
         renderTeams(State.teams);
         //alert("Sorteio Completo!");
         atualizarEstadoBotoesSorteio();
+        scrollParaResultados();
     };
     
     // --- FUNÇÃO PARA SORTEAR UM JOGADOR POR VEZ ---
@@ -204,12 +209,33 @@ window.Sorteio.init = function() {
     btnSingle.onclick = () => {
         if (!garantirSorteioIniciado()) return;
 
-        const nextPlayer = State.drawQueue.shift(); // Puxa só o primeiro
+        const nextPlayer = State.drawQueue.shift(); 
         if (nextPlayer) {
-            drawNextPlayer(nextPlayer.name, nextPlayer.pote, State.teams);
+            // 1. Armazenamos o time que recebeu o jogador (o retorno da função)
+            const timeAlvo = drawNextPlayer(nextPlayer.name, nextPlayer.pote, State.teams);
+            
             riscarNomeNoCampo(nextPlayer.name, nextPlayer.pote);
             renderTeams(State.teams);
             atualizarEstadoBotoesSorteio();
+
+            // 2. Lógica de Rolagem Inteligente
+            const cards = document.querySelectorAll('.team');
+            const cardElemento = cards[timeAlvo.id]; // O ID do time corresponde ao índice do card
+
+            if (cardElemento) {
+                cardElemento.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'nearest', // Evita que a página pule muito verticalmente
+                    inline: 'center'  // No Mobile, centraliza o card horizontalmente no carrossel
+                });
+
+                // 3. Feedback Visual (Opcional): Faz o card brilhar rapidamente com a cor do time
+                /*cardElemento.style.transition = '0.3s';
+                cardElemento.style.boxShadow = `0 0 15px ${timeAlvo.color}`;
+                setTimeout(() => {
+                    cardElemento.style.boxShadow = 'none';
+                }, 800);*/
+            }
         }
     };
 
@@ -231,6 +257,7 @@ window.Sorteio.init = function() {
 
         renderTeams(State.teams);
         atualizarEstadoBotoesSorteio();
+        scrollParaResultados();
     };
 
     // FUNÇÃO PARA RISCAR OS NOMES SORTEADOS
