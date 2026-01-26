@@ -235,12 +235,7 @@ window.Sorteio.init = function() {
 
     // FUNÇÃO PARA RISCAR OS NOMES SORTEADOS
     function riscarNomeNoCampo(nome, poteNum) {
-        const tx = document.getElementById(`pote${poteNum}`);
-        const nomeRiscado = aplicarRiscado(nome);
-
-        // Substitui o nome limpo pelo nome riscado no textarea
-        const regex = new RegExp("^" + nome + "$", "m");
-        tx.value = tx.value.replace(regex, nomeRiscado);
+    aplicarRiscado(`pote${poteNum}`, nome); // Chamamos apenas a função do utils que já faz todo o trabalho de procurar, limpar espaços e riscar dentro do textarea correto.
     }
     
     // --- FUNÇÃO PARA CONTAR A QUANTIDADE DE JOGADORES ---

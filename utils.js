@@ -79,6 +79,34 @@ export function carregarConfiguracaoDoStorage() {
 }
 
 // Função que risca o nome dos jogadores usando caracteres Unicode especiais
-export function aplicarRiscado(texto) {
-    return `  ×${texto}×`;
+export function aplicarRiscado(poteId, nomeSorteado) {
+    if (!nomeSorteado) return; // Segurança contra valores nulos
+    
+    const textarea = document.getElementById(poteId);
+    if (!textarea) return;
+
+    const nomeAlvo = nomeSorteado.trim();
+    const linhas = textarea.value.split('\n');
+    let encontrouERiscou = false;
+
+    const novasLinhas = linhas.map(linha => {
+        const linhaLimpa = linha.trim();
+
+        // Se a linha estiver vazia, mantém
+        if (!linhaLimpa) return linha;
+
+        // Se já riscou um nesta rodada ou se a linha já está riscada, mantém
+        if (encontrouERiscou || linha.includes('-----')) return linha;
+
+        // Compara ignorando espaços extras
+        if (linhaLimpa === nomeAlvo) {
+            encontrouERiscou = true;
+            return `  ×${nomeAlvo}×`;
+        }
+
+        return linha;
+    });
+
+    textarea.value = novasLinhas.join('\n');
+    textarea.dispatchEvent(new Event('input'));
 }

@@ -18,7 +18,9 @@ export function fullDraw(potes, numTeams, colors) {
         const poteKey = `pote${p}`;
         const playersInPote = shuffleArray([...potes[poteKey]]);
 
-        playersInPote.forEach(playerName => {
+        playersInPote.forEach(playerNameRaw => {
+            const playerName = playerNameRaw.trim();
+
             // Encontra o time com menos jogadores no momento
             // Se houver empate, o filter pega todos e o sorteio escolhe um
             const minPlayers = Math.min(...teams.map(t => t.players.length));
@@ -42,7 +44,9 @@ export function fullDraw(potes, numTeams, colors) {
     return teams;
 }
 
-export function drawNextPlayer(playerName, poteOrigem, teams) {
+export function drawNextPlayer(playerNameRaw, poteOrigem, teams) {
+    const playerName = playerNameRaw.trim();
+
     // 1. Encontrar a quantidade mínima de jogadores que um time tem
     const minPlayers = Math.min(...teams.map(t => t.players.length));
     
