@@ -18,6 +18,7 @@ export const State = {
     // Para o sorteio por clique:
     currentPoteIndex: 1,
     currentPlayersQueue: [],
+    ultimoJogadorNome: null,
     drawQueue: [],
     teams: [],
     lastShared: null,

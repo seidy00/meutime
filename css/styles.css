@@ -24,6 +24,33 @@ p {
     margin: 0 0 8px;
 }
 
+.baseboard-box {
+    background-color: #111517;
+    color: #858787;
+    text-align: center;
+}
+.baseboard {
+    max-width: 1440px;
+    display: flex;
+    gap: 12px;
+    margin: auto;
+    padding: 10px 20px 28px;
+    font-size: 0.875em;
+}
+.baseboard-column {
+    width: 33%;
+}
+.baseboard-column-right {
+    text-align: right;
+    width: 33%;
+}
+@media (max-width: 768px) {
+    .baseboard {
+        gap: 24px;
+        padding: 10px 20px 20px;
+    }
+}
+
 /* +++++++++++++ TOPO - CONFIGURAÇÕES +++++++++++++ */
 .top-section {
     position: relative;
@@ -572,6 +599,30 @@ button.btn-clear:disabled {
     background-color: #5A6266;
     z-index: 2;
 }
+.left-corner-kick {
+    position: absolute;
+    bottom: 94%;
+    left: -6%;
+    width: 12%;
+    height: 6%;
+    border: 1px solid #5A6266;
+    border-bottom-left-radius: 100vw;
+    border-bottom-right-radius: 100vw;
+    box-sizing: border-box;
+    border-top-color: transparent;
+}
+.right-corner-kick {
+    position: absolute;
+    bottom: 94%;
+    left: 94%;
+    width: 12%;
+    height: 6%;
+    border: 1px solid #5A6266;
+    border-bottom-left-radius: 100vw;
+    border-bottom-right-radius: 100vw;
+    box-sizing: border-box;
+    border-top-color: transparent;
+}
 .penalty-box {
     position: absolute;
     top: 0%;
@@ -669,6 +720,25 @@ button.btn-clear:disabled {
     /*transform: rotate(270deg);*/
 }
 
+@keyframes pinSurgindo {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -35%); /* Começa um pouco mais abaixo */
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%); /* Termina na posição central correta */
+    }
+}
+.animar-pin {
+    animation: pinSurgindo 0.25s ease-out forwards;
+}
+
+/* Garantir que o pin comece invisível se tiver a classe de animação */
+.player-marker.animar-pin {
+    opacity: 0;
+}
+
 /* Posicionamento dos jogadores no campo*/
 .player-marker { position: absolute; transform: translate(-50%, -50%); transition: all 0.5s ease; }
 
@@ -719,7 +789,6 @@ button.btn-clear:disabled {
     gap: 6px;
     padding: 6px 8px;
     color: #ECEDEF;
-    border-radius: 4px;
     border-top: 1px solid #2C3134;
     transition: transform 0.2s ease;
 }

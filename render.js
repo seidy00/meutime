@@ -50,6 +50,8 @@ export function renderTeams(teams) {
             <div class="pitch-container">
                 <div class="soccer-pitch">
                     <div class="line-top"></div>
+                    <div class="left-corner-kick"></div>
+                    <div class="right-corner-kick"></div>
                     <div class="penalty-box"></div>
                     <div class="six-yard-box"></div>
                     <div class="penalty-spot"></div>
@@ -78,13 +80,10 @@ export function renderTeams(teams) {
 }
 
 function renderPlayersInPitch(team, color) {
-    // 'team' é o objeto completo. Acessamos players assim:
     const allPlayers = team.players || [];
     const textColor = getContrastingColor(color);
     
-    const titulares = allPlayers.slice(0, 5); // Pegamos apenas os 5 primeiros para o campo
-    
-    // 1. Identifica o primeiro goleiro entre os titulares
+    const titulares = allPlayers.slice(0, 5);
     const gkIndex = titulares.findIndex(p => p.pote === 1);
     let linePlayers = [...titulares];
     let gkPlayer = null;
@@ -96,10 +95,7 @@ function renderPlayersInPitch(team, color) {
     const numLine = linePlayers.length;
     if (numLine === 0 && !gkPlayer) return '';
 
-    // 2. Lógica da Trava de Tática
     const variantes = nonGKPositions[numLine] || [];
-    
-    // Se o número de jogadores de linha mudou ou se nunca sorteamos uma tática
     if (team.lastLineCount !== numLine || team.tacticVariant === undefined) {
         team.tacticVariant = Math.floor(Math.random() * variantes.length);
         team.lastLineCount = numLine; 
@@ -107,21 +103,32 @@ function renderPlayersInPitch(team, color) {
 
     const táticaEscolhida = variantes[team.tacticVariant] || variantes[0] || [];
 
+    // --- LÓGICA DE ANIMAÇÃO ---
+    // Pegamos o nome do último jogador do State
+    const ultimoNome = State.ultimoJogadorNome ? State.ultimoJogadorNome.trim() : null;
+    
     let html = '';
 
     // Renderiza Goleiro
     if (gkPlayer) {
-        html += `<div class="player-marker pos-gk">
+        // Verifica se o goleiro é o recém-chegado
+        const animarGK = (gkPlayer.name.trim() === ultimoNome) ? 'animar-pin' : '';
+        html += `<div class="player-marker pos-gk ${animarGK}">
             <div class="player-pin" style="background-color: ${color}; color: ${textColor}">${gkPlayer.name.charAt(0).toUpperCase()}</div>
             <div class="player-name">${gkPlayer.name}</div>
         </div>`;
     }
 
-    // Renderiza Jogadores de linha seguindo a tática travada para não re-sortear a cada clique
+    // Renderiza Jogadores de linha
     linePlayers.forEach((player, i) => {
         const classePosicao = táticaEscolhida[i] || 'f0-m1';
-        html += `<div class="player-marker ${classePosicao}">
-            <div class="player-pin" style="background-color: ${color}; color: ${textColor}">${player.name.charAt(0).toUpperCase()}</div>
+        // Verifica se este jogador de linha é o recém-chegado
+        const animarLinha = (player.name.trim() === ultimoNome) ? 'animar-pin' : '';
+        
+        html += `<div class="player-marker ${classePosicao} ${animarLinha}">
+            <div class="player-pin" style="background-color: ${color}; color: ${textColor}">
+                ${player.name.charAt(0).toUpperCase()}
+            </div>
             <div class="player-name">${player.name}</div>
         </div>`;
     });

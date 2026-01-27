@@ -211,14 +211,16 @@ window.Sorteio.init = function() {
 
         const nextPlayer = State.drawQueue.shift(); 
         if (nextPlayer) {
-            // 1. Armazenamos o time que recebeu o jogador (o retorno da função)
-            const timeAlvo = drawNextPlayer(nextPlayer.name, nextPlayer.pote, State.teams);
-            
-            riscarNomeNoCampo(nextPlayer.name, nextPlayer.pote);
-            renderTeams(State.teams);
-            atualizarEstadoBotoesSorteio();
+            // 1. Define no State quem é o novo jogador para o render.js saber quem animar
+            State.ultimoJogadorNome = null;
 
-            // 2. Lógica de Rolagem Inteligente
+            const timeAlvo = drawNextPlayer(nextPlayer.name, nextPlayer.pote, State.teams);
+            riscarNomeNoCampo(nextPlayer.name, nextPlayer.pote);
+
+            // 2. Define quem é o ATUAL jogador que deve animar
+            State.ultimoJogadorNome = nextPlayer.name;
+
+            // 3. Rola o card do time
             const cards = document.querySelectorAll('.team');
             const cardElemento = cards[timeAlvo.id]; // O ID do time corresponde ao índice do card
 
@@ -229,13 +231,19 @@ window.Sorteio.init = function() {
                     inline: 'center'  // No Mobile, centraliza o card horizontalmente no carrossel
                 });
 
-                // 3. Feedback Visual (Opcional): Faz o card brilhar rapidamente com a cor do time
+                // Feedback Visual (Opcional): Faz o card brilhar rapidamente com a cor do time
                 /*cardElemento.style.transition = '0.3s';
                 cardElemento.style.boxShadow = `0 0 15px ${timeAlvo.color}`;
                 setTimeout(() => {
                     cardElemento.style.boxShadow = 'none';
                 }, 800);*/
             }
+
+            // 4. Aguarda a rolagem (400ms) para renderizar o pin com a animação
+            setTimeout(() => {
+                renderTeams(State.teams);
+                atualizarEstadoBotoesSorteio();
+            }, 400);
         }
     };
 
