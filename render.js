@@ -19,22 +19,69 @@ function getContrastingColor(hex) {
     return lightColors.includes(hex.toLowerCase()) ? '#000000' : '#ecedef';
 }
 
+function getPinHTML(player) {
+    return `
+        <div class="pin-content">
+            <span class="info-initial">${player.name.charAt(0).toUpperCase()}</span>
+            <span class="info-pote">${player.pote}</span>
+        </div>
+    `;
+}
+
 export function renderTeams(teams) {
     const resultsDiv = document.getElementById('resultsDiv');
-    resultsDiv.innerHTML = ''; 
+    if (!resultsDiv) return;
 
+    if (!teams || teams.length === 0) {
+        resultsDiv.innerHTML = '';
+        return;
+    }
+
+    // Tenta encontrar o carrossel já existente
+    let carouselContainer = document.getElementById('team-carousel');
+
+    // Se o carrossel NÃO existe, criamos a estrutura inicial
+    if (!carouselContainer) {
+        resultsDiv.innerHTML = ''; 
+        
+        const headerSection = document.createElement('div');
+        headerSection.className = 'results-header-actions';
+        headerSection.innerHTML = `
+            <h2>Escalações</h2>
+            <button id="btnViewMode" onclick="window.toggleViewMode()" class="btn-toggle-info">
+                Exibir: Potes
+            </button>
+        `;
+        resultsDiv.appendChild(headerSection);
+
+        carouselContainer = document.createElement('div');
+        carouselContainer.className = 'teams-carousel-wrapper';
+        carouselContainer.id = 'team-carousel';
+        resultsDiv.appendChild(carouselContainer);
+    }
+
+    // ALTERNÂNCIA DE MODO (CSS):
+    // Se o modo for 'pote', adiciona a classe, senão remove.
+    carouselContainer.classList.toggle('view-mode-pote', State.viewMode === 'pote');
+    const btn = document.getElementById('btnViewMode');
+    if (btn) btn.innerText = State.viewMode === 'initial' ? 'Exibir: Potes' : 'Exibir: Iniciais';
+
+    // LIMPA E RECONSTRÓI APENAS OS CARDS (Necessário para novos jogadores)
+    // Mas como o 'carouselContainer' não é deletado, o scroll-bar pai se mantém estável
+    carouselContainer.innerHTML = '';
+
+    // 4. Renderizar os times
     teams.forEach((team, index) => {
         const teamDiv = document.createElement('div');
-        teamDiv.className = 'team show';
-        teamDiv.style.setProperty('--team-color', team.color);
+        teamDiv.className = 'team';
         
+        //teamDiv.style.setProperty('--team-color', team.color);
         const nomeDoTime = getNomeDaCor(team.color);
         const shieldPath = State.shuffledShields[index % State.shuffledShields.length] || State.shieldPaths[0];
-
         const textColor = getContrastingColor(team.color);
         const reservas = team.players.slice(5);
 
-        teamDiv.innerHTML += `
+        teamDiv.innerHTML = `
             <div class="team-header">
                 <div class="name-and-color">
                     <svg class="team-shield" viewBox="0 0 150 150" width="30" height="30">
@@ -67,7 +114,7 @@ export function renderTeams(teams) {
                     ${reservas.map(p => `
                         <div class="bench-player-item">
                             <div class="player-pin mini" style="background-color: ${team.color}; color: ${textColor}">
-                                ${p.name.charAt(0).toUpperCase()}
+                                ${getPinHTML(p)}
                             </div>
                             <span class="bench-player-name">${p.name}</span>
                         </div>
@@ -75,59 +122,50 @@ export function renderTeams(teams) {
                 </div>
             </div>
         `;
-        resultsDiv.appendChild(teamDiv);
+        
+        carouselContainer.appendChild(teamDiv);
     });
 }
 
 function renderPlayersInPitch(team, color) {
     const allPlayers = team.players || [];
     const textColor = getContrastingColor(color);
-    
+    const ultimoNome = State.ultimoJogadorNome ? State.ultimoJogadorNome.trim() : null;
+
     const titulares = allPlayers.slice(0, 5);
     const gkIndex = titulares.findIndex(p => p.pote === 1);
     let linePlayers = [...titulares];
     let gkPlayer = null;
 
-    if (gkIndex !== -1) {
-        gkPlayer = linePlayers.splice(gkIndex, 1)[0];
-    }
+    if (gkIndex !== -1) gkPlayer = linePlayers.splice(gkIndex, 1)[0];
 
     const numLine = linePlayers.length;
-    if (numLine === 0 && !gkPlayer) return '';
-
     const variantes = nonGKPositions[numLine] || [];
+    
     if (team.lastLineCount !== numLine || team.tacticVariant === undefined) {
         team.tacticVariant = Math.floor(Math.random() * variantes.length);
         team.lastLineCount = numLine; 
     }
 
     const táticaEscolhida = variantes[team.tacticVariant] || variantes[0] || [];
-
-    // --- LÓGICA DE ANIMAÇÃO ---
-    // Pegamos o nome do último jogador do State
-    const ultimoNome = State.ultimoJogadorNome ? State.ultimoJogadorNome.trim() : null;
-    
     let html = '';
 
-    // Renderiza Goleiro
     if (gkPlayer) {
-        // Verifica se o goleiro é o recém-chegado
         const animarGK = (gkPlayer.name.trim() === ultimoNome) ? 'animar-pin' : '';
         html += `<div class="player-marker pos-gk ${animarGK}">
-            <div class="player-pin" style="background-color: ${color}; color: ${textColor}">${gkPlayer.name.charAt(0).toUpperCase()}</div>
+            <div class="player-pin" style="background-color: ${color}; color: ${textColor}">
+                ${getPinHTML(gkPlayer)}
+            </div>
             <div class="player-name">${gkPlayer.name}</div>
         </div>`;
     }
 
-    // Renderiza Jogadores de linha
     linePlayers.forEach((player, i) => {
         const classePosicao = táticaEscolhida[i] || 'f0-m1';
-        // Verifica se este jogador de linha é o recém-chegado
         const animarLinha = (player.name.trim() === ultimoNome) ? 'animar-pin' : '';
-        
         html += `<div class="player-marker ${classePosicao} ${animarLinha}">
             <div class="player-pin" style="background-color: ${color}; color: ${textColor}">
-                ${player.name.charAt(0).toUpperCase()}
+                ${getPinHTML(player)}
             </div>
             <div class="player-name">${player.name}</div>
         </div>`;

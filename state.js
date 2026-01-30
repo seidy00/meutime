@@ -33,4 +33,5 @@ export const State = {
         '<path d="M145,0H0s-1.1,112.12,72.5,150h0s0,0,0,0c0,0,0,0,0,0h0C146.1,112.12,145,0,145,0Z"/>'
     ],
     shuffledShields: [], // Onde guardaremos a ordem sorteada
+    viewMode: 'initial',
 };

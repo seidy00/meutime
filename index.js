@@ -534,8 +534,23 @@ window.Sorteio.init = function() {
         });
     }
 
+    window.toggleViewMode = () => {
+        State.viewMode = State.viewMode === 'initial' ? 'pote' : 'initial';
+        
+        const carousel = document.getElementById('team-carousel');
+        const btn = document.getElementById('btnViewMode');
+        
+        if (carousel) {
+            carousel.classList.toggle('view-mode-pote', State.viewMode === 'pote');
+        }
+        
+        if (btn) {
+            btn.innerText = State.viewMode === 'initial' ? 'Exibir: Potes' : 'Exibir: Iniciais';
+        }
+    };
+
     setupCarouselDots('potesContainer', 'potesDots');
-    setupCarouselDots('resultsDiv', 'resultsDots');
+    setupCarouselDots('team-carousel', 'resultsDots');
     carregarConfiguracaoDoStorage();
 };
 
