@@ -25,8 +25,8 @@ p {
 }
 
 .baseboard-box {
-    background-color: #111517;
-    color: #858787;
+    background-color: #272C32;
+    color: #ECEDEF;
     text-align: center;
 }
 .baseboard {
@@ -171,7 +171,7 @@ p {
 
 .select-items {
     position: absolute;
-    background-color: #272c32;
+    background-color: #272C32;
     border: none;
     border-radius: 8px;
     left: 0;
@@ -502,9 +502,14 @@ button.btn-clear:disabled {
 }
 
 .results-header-actions h2 {
-    font-size: 18px;
+    font-size: 20px;
     margin: 0;
     color: #ECEDEF;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 8px;
 }
 
 /* Esconde o número pote por padrão */
@@ -517,7 +522,10 @@ button.btn-clear:disabled {
 
 .btn-toggle-info {
     background: #101416;
-    color: #858787;
+    color: #ECEDEF;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
     padding: 8px 24px;
     border: none;
     border-radius: 24px;
@@ -887,7 +895,6 @@ button.btn-clear:disabled {
     display: block; /* Mostra a lista unificada */
 }
 .list-color-team {
-    border-top: 8px solid var(--team-color);
     padding: 0;
 }
 .list-header {
@@ -903,23 +910,21 @@ button.btn-clear:disabled {
     justify-content: space-between;
     align-items: center;
     padding: 4px 0 6px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin: 0 -10px;
+    border-top: 1px solid #1C2125;
 }
 .player-name-list {
     color: #ECEDEF;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 500;
+    margin-left: 12px;
 }
 .player-pote-list {
     color: #858787;
+    text-align: center;
     font-size: 14px;
-    font-weight: bold;
-    padding-right: 10px;
-}
-/* Ajuste no cabeçalho para acomodar dois botões */
-.header-buttons {
-    display: flex;
-    gap: 10px;
+    padding: 0 10px;
+    margin-right: 10px;
 }
 
 .hidden { display: none; }
