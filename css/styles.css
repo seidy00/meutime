@@ -516,16 +516,27 @@ button.btn-clear:disabled {
 .view-mode-pote .info-initial { display: none; }
 
 .btn-toggle-info {
-    background: #ECEDEF;
-    color: #101416;
+    background: #101416;
+    color: #858787;
     padding: 8px 24px;
     border: none;
     border-radius: 24px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.2s ease;
 }
 .btn-toggle-info:hover {
-    background: #8E96FF;
+    background: #272C32;
+    transition: all 0.2s ease;
+}
+.btn-toggle-info.active {
+    background: #ECEDEF;
+    color: #101416;
+    transition: all 0.2s ease;
+}
+.btn-toggle-info.active:hover {
+    background: #ECEDEF;
+    color: #101416;
+    transition: all 0.2s ease;
 }
 
 /* Ajuste para o carrossel não encostar no título */
@@ -587,6 +598,7 @@ button.btn-clear:disabled {
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         scrollbar-width: none;
+        scroll-behavior: smooth;
     }
     .team {
         flex: 0 0 100%;
@@ -858,6 +870,56 @@ button.btn-clear:disabled {
     font-size: 14px;
     color: #ECEDEF;
     white-space: nowrap;
+}
+
+/* Modo de visualização em lista */
+.team-list-view {
+    display: none; /* Começa escondida */
+    background: #101416;
+    padding: 0px 10px;
+    margin-right: -2px;
+}
+.layout-mode-list .pitch-container,
+.layout-mode-list .bench-container {
+    display: none; /* Esconde o campo e os reservas separados */
+}
+.layout-mode-list .team-list-view {
+    display: block; /* Mostra a lista unificada */
+}
+.list-color-team {
+    border-top: 8px solid var(--team-color);
+    padding: 0;
+}
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    color: #858787;
+    font-size: 12px;
+    text-transform: uppercase;
+    padding: 8px 0 12px;
+}
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0 6px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+.player-name-list {
+    color: #ECEDEF;
+    font-size: 20px;
+    font-weight: 500;
+}
+.player-pote-list {
+    color: #858787;
+    font-size: 14px;
+    font-weight: bold;
+    padding-right: 10px;
+}
+/* Ajuste no cabeçalho para acomodar dois botões */
+.header-buttons {
+    display: flex;
+    gap: 10px;
 }
 
 .hidden { display: none; }

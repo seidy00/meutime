@@ -42,15 +42,20 @@ export function renderTeams(teams) {
 
     // Se o carrossel NÃO existe, criamos a estrutura inicial
     if (!carouselContainer) {
-        resultsDiv.innerHTML = ''; 
+        resultsDiv.innerHTML = '';
         
         const headerSection = document.createElement('div');
         headerSection.className = 'results-header-actions';
         headerSection.innerHTML = `
             <h2>Escalações</h2>
-            <button id="btnViewMode" onclick="window.toggleViewMode()" class="btn-toggle-info">
-                Exibir: Potes
-            </button>
+            <div class="header-buttons">
+                <button id="btnViewMode" onclick="window.toggleViewMode()" class="btn-toggle-info">
+                    Potes
+                </button>
+                <button id="btnLayoutMode" onclick="window.toggleLayoutMode()" class="btn-toggle-info">
+                    Lista
+                </button>
+            </div>
         `;
         resultsDiv.appendChild(headerSection);
 
@@ -60,11 +65,17 @@ export function renderTeams(teams) {
         resultsDiv.appendChild(carouselContainer);
     }
 
-    // ALTERNÂNCIA DE MODO (CSS):
-    // Se o modo for 'pote', adiciona a classe, senão remove.
+    // APLICAÇÃO DOS ESTADOS (Cores e Visibilidade)
+    const btnPote = document.getElementById('btnViewMode');
+    const btnLista = document.getElementById('btnLayoutMode');
+
+    // Se o State estiver como 'pote', adiciona classe ativa, senão remove
+    btnPote.classList.toggle('active', State.viewMode === 'pote');
+    btnLista.classList.toggle('active', State.layoutMode === 'list');
+
+    // Aplica as classes no container para o CSS controlar o que aparece
     carouselContainer.classList.toggle('view-mode-pote', State.viewMode === 'pote');
-    const btn = document.getElementById('btnViewMode');
-    if (btn) btn.innerText = State.viewMode === 'initial' ? 'Exibir: Potes' : 'Exibir: Iniciais';
+    carouselContainer.classList.toggle('layout-mode-list', State.layoutMode === 'list');
 
     // LIMPA E RECONSTRÓI APENAS OS CARDS (Necessário para novos jogadores)
     // Mas como o 'carouselContainer' não é deletado, o scroll-bar pai se mantém estável
@@ -107,6 +118,8 @@ export function renderTeams(teams) {
                     ${renderPlayersInPitch(team, team.color)}
                 </div>
             </div>
+
+            ${renderPlayersList(team.players)}
             
             <div class="bench-container ${reservas.length > 0 ? '' : 'hidden'}">
                 <p class="bench-title">Substituições</p>
@@ -125,6 +138,9 @@ export function renderTeams(teams) {
         
         carouselContainer.appendChild(teamDiv);
     });
+    if (window.setupCarouselDots) {
+        window.setupCarouselDots('team-carousel', 'resultsDots');
+    }
 }
 
 function renderPlayersInPitch(team, color) {
@@ -132,13 +148,29 @@ function renderPlayersInPitch(team, color) {
     const textColor = getContrastingColor(color);
     const ultimoNome = State.ultimoJogadorNome ? State.ultimoJogadorNome.trim() : null;
 
-    const titulares = allPlayers.slice(0, 5);
-    const gkIndex = titulares.findIndex(p => p.pote === 1);
+    // 1. Pegamos os 5 titulares
+    let titulares = allPlayers.slice(0, 5);
+    if (titulares.length === 0) return '';
+
+    // 2. BUSCA PELO GOLEIRO:
+    // Primeiro, tentamos achar alguém do Pote 1
+    let gkIndex = titulares.findIndex(p => p.pote === 1);
+    
+    // REGRA DE OURO: Se não houver ninguém do Pote 1, 
+    // o primeiro jogador da lista vira o goleiro "quebra-galho"
+    if (gkIndex === -1 && titulares.length > 0) {
+        gkIndex = 0; 
+    }
+
     let linePlayers = [...titulares];
     let gkPlayer = null;
 
-    if (gkIndex !== -1) gkPlayer = linePlayers.splice(gkIndex, 1)[0];
+    // Remove o goleiro escolhido da lista de jogadores de linha
+    if (gkIndex !== -1) {
+        gkPlayer = linePlayers.splice(gkIndex, 1)[0];
+    }
 
+    // 3. Lógica de Táticas (agora baseada nos jogadores que sobraram na linha)
     const numLine = linePlayers.length;
     const variantes = nonGKPositions[numLine] || [];
     
@@ -150,6 +182,7 @@ function renderPlayersInPitch(team, color) {
     const táticaEscolhida = variantes[team.tacticVariant] || variantes[0] || [];
     let html = '';
 
+    // Renderiza o Goleiro (seja ele Pote 1 ou não)
     if (gkPlayer) {
         const animarGK = (gkPlayer.name.trim() === ultimoNome) ? 'animar-pin' : '';
         html += `<div class="player-marker pos-gk ${animarGK}">
@@ -160,6 +193,7 @@ function renderPlayersInPitch(team, color) {
         </div>`;
     }
 
+    // Renderiza os Jogadores de Linha restantes
     linePlayers.forEach((player, i) => {
         const classePosicao = táticaEscolhida[i] || 'f0-m1';
         const animarLinha = (player.name.trim() === ultimoNome) ? 'animar-pin' : '';
@@ -172,4 +206,25 @@ function renderPlayersInPitch(team, color) {
     });
 
     return html;
+}
+
+function renderPlayersList(players) {
+    // Ordenamos a lista por pote para ficar organizado
+    const sortedPlayers = [...players].sort((a, b) => a.pote - b.pote);
+    
+    return `
+        <div class="team-list-view">
+            <div class="list-color-team"></div>
+            <div class="list-header">
+                <span>Jogador</span>
+                <span>Pote</span>
+            </div>
+            ${sortedPlayers.map(p => `
+                <div class="list-item">
+                    <span class="player-name-list">${p.name}</span>
+                    <span class="player-pote-list">${p.pote}</span>
+                </div>
+            `).join('')}
+        </div>
+    `;
 }

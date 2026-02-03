@@ -386,7 +386,7 @@ window.Sorteio.init = function() {
     }
     window.renderPotesVisual = renderPotesVisual; // Torne-a global para o utils.js conseguir enxergar
 
-    function setupCarouselDots(containerId, dotsId) {
+    window.setupCarouselDots = function(containerId, dotsId) {
         const container = document.getElementById(containerId);
         const dotsContainer = document.getElementById(dotsId);
         
@@ -536,21 +536,22 @@ window.Sorteio.init = function() {
 
     window.toggleViewMode = () => {
         State.viewMode = State.viewMode === 'initial' ? 'pote' : 'initial';
-        
-        const carousel = document.getElementById('team-carousel');
         const btn = document.getElementById('btnViewMode');
+        const carousel = document.getElementById('team-carousel');
         
-        if (carousel) {
-            carousel.classList.toggle('view-mode-pote', State.viewMode === 'pote');
-        }
+        if (btn) btn.classList.toggle('active', State.viewMode === 'pote');
+        if (carousel) carousel.classList.toggle('view-mode-pote', State.viewMode === 'pote');
+    };
+    window.toggleLayoutMode = () => {
+        State.layoutMode = State.layoutMode === 'pitch' ? 'list' : 'pitch';
+        const btn = document.getElementById('btnLayoutMode');
+        const carousel = document.getElementById('team-carousel');
         
-        if (btn) {
-            btn.innerText = State.viewMode === 'initial' ? 'Exibir: Potes' : 'Exibir: Iniciais';
-        }
+        if (btn) btn.classList.toggle('active', State.layoutMode === 'list');
+        if (carousel) carousel.classList.toggle('layout-mode-list', State.layoutMode === 'list');
     };
 
     setupCarouselDots('potesContainer', 'potesDots');
-    setupCarouselDots('team-carousel', 'resultsDots');
     carregarConfiguracaoDoStorage();
 };
 

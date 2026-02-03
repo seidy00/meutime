@@ -34,4 +34,5 @@ export const State = {
     ],
     shuffledShields: [], // Onde guardaremos a ordem sorteada
     viewMode: 'initial',
+    layoutMode: 'pitch',
 };
