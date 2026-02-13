@@ -83,6 +83,9 @@ p {
         display: flex;
         flex-direction: column;
     }
+    .container {
+        padding: 0;
+    }
 }
 
 /* +++++++++++++ TOPO - TIPOGRAFIA +++++++++++++ */
@@ -347,6 +350,7 @@ textarea::-webkit-scrollbar-track {
     .potes-container {
         display: flex !important;
         margin: 24px 0 12px 0;
+        padding: 0;
         gap: 12px;
         overflow-x: auto !important;
         scroll-snap-type: x mandatory;
@@ -358,11 +362,12 @@ textarea::-webkit-scrollbar-track {
     }
     .potes-row {
         display: flex;
+        max-width: none;
         margin: 0 40px;
     }
     .pote-column {
-        flex: 0 0 80vw;
-        min-width: 80vw;
+        flex: 0 0 90vw;
+        min-width: 90vw;
         scroll-snap-align: center;
     }
     textarea {
@@ -485,20 +490,17 @@ button.btn-clear:disabled {
 
 /* +++++++++++++ CAMPO COM OS RESULTADOS +++++++++++++ */
 .results-container {
-    max-width: 1440px;
     margin: 24px auto;
     gap: 12px;
 }
 
 .results-header-actions {
     display: flex;
+    max-width: 1440px;
     justify-content: space-between;
     align-items: center;
-    padding: 0px 40px;
-    width: 100%;
-    max-width: 1440px;
     margin: 0 auto;
-    box-sizing: border-box;
+    padding: 0 40px;
 }
 
 .results-header-actions h2 {
@@ -550,10 +552,12 @@ button.btn-clear:disabled {
 /* Ajuste para o carrossel não encostar no título */
 .teams-carousel-wrapper {
     display: grid;
+    margin: 0 auto;
+    padding: 12px 40px;
+    max-width: 1440px;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     overflow-x: auto;
-    gap: 16px;
-    padding: 12px 40px;
+    gap: 12px;
 }
 
 .team {
@@ -601,12 +605,16 @@ button.btn-clear:disabled {
     .results-container::-webkit-scrollbar {
         display: none;
     }
+    .results-header-actions {
+        padding: 0 20px;
+    }
     .teams-carousel-wrapper {
         display: flex;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         scrollbar-width: none;
         scroll-behavior: smooth;
+        padding: 12px 20px;
     }
     .team {
         flex: 0 0 100%;
