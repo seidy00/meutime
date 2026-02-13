@@ -311,6 +311,7 @@ window.Sorteio.init = function() {
         // 2. Limpa os dados internos do State
         State.teams = [];
         State.drawQueue = [];
+        State.ultimoJogadorNome = null;
         State.shuffledShields = [];
         
         // 3. Destrava os botões
@@ -359,7 +360,11 @@ window.Sorteio.init = function() {
             resultsDiv.innerHTML = "";
         }
 
+        const resultsDots = document.getElementById('resultsDots');
+        if (resultsDots) resultsDots.innerHTML = '';
+
         atualizarEstadoBotoesSorteio();
+        setupCarouselDots('potesContainer', 'potesDots');
         console.log("Sistema resetado. Potes liberados para edição.");
     };
 
