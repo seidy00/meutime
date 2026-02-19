@@ -85,6 +85,7 @@ window.Sorteio.init = function() {
     });
 
     function atualizarEstadoBotoesSorteio() {
+        const btnStart = document.getElementById('btnStartDrawing');
         const btnFull = document.getElementById('btnFullDraw');
         const btnSingle = document.getElementById('btnSingleDraw');
         const btnPote = document.getElementById('btnPoteDraw');
@@ -110,7 +111,7 @@ window.Sorteio.init = function() {
         const podeSortear = temJogadores && coresValidas;
 
         // Bloqueia ou desbloqueia
-        [btnFull, btnSingle, btnPote].forEach(btn => {
+        [btnStart, btnFull, btnSingle, btnPote].forEach(btn => {
             if (btn) {
                 btn.disabled = !podeSortear;
                 if (!coresValidas && temJogadores) {
@@ -184,6 +185,18 @@ window.Sorteio.init = function() {
     function scrollParaResultados() {
         resultsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
+    const btnStart = document.getElementById('btnStartDrawing');
+    const drawingActions = document.getElementById('drawingActions');
+    btnStart.onclick = () => {
+        // 1. Esconde o botão de "Iniciar" e mostra os de "Sorteio"
+        btnStart.style.display = 'none';
+        drawingActions.style.display = 'flex';
+
+        // 2. Chama a lógica que você já tem para validar e criar os times
+        // (Geralmente a função que renderiza os cards vazios)
+        garantirSorteioIniciado();
+    };
 
     // --- FUNÇÃO PARA SORTEAR TUDO ---
     const btnFull = document.getElementById('btnFullDraw');
@@ -362,6 +375,9 @@ window.Sorteio.init = function() {
 
         const resultsDots = document.getElementById('resultsDots');
         if (resultsDots) resultsDots.innerHTML = '';
+
+        btnStart.style.display = 'inline-flex';
+        drawingActions.style.display = 'none';
 
         atualizarEstadoBotoesSorteio();
         setupCarouselDots('potesContainer', 'potesDots');

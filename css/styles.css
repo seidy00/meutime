@@ -47,7 +47,7 @@ p {
 @media (max-width: 768px) {
     .baseboard {
         gap: 24px;
-        padding: 10px 20px 20px;
+        padding: 48px 20px 20px;
     }
 }
 
@@ -433,19 +433,8 @@ button.btn-clear:disabled {
 button svg {
     flex-shrink: 0;
 }
-@media (max-width: 768px) {
-    .actions-row {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-    }
-    .drawdiv, .shareresetdiv {
-        display: flex;
-        flex-direction: column;
-    }
-}
 
-#btnFullDraw, #btnSingleDraw, #btnPoteDraw, #btnShare, #btnReset {
+#btnStartDrawing, #btnFullDraw, #btnSingleDraw, #btnPoteDraw, #btnShare, #btnReset {
     margin: 4px;
     padding: 14px 24px;
     border-radius: 8px;
@@ -460,7 +449,7 @@ button svg {
     gap: 8px;
     vertical-align: middle;
 }
-#btnFullDraw, #btnSingleDraw, #btnPoteDraw {
+#btnStartDrawing, #btnFullDraw, #btnSingleDraw, #btnPoteDraw {
     background-color: #ECEDEF;
     border: none;
     font-weight: bold;
@@ -477,7 +466,7 @@ button svg {
     border: 1px solid #4A56E2;
     color: #858787;
 }
-#btnFullDraw:hover, #btnSingleDraw:hover, #btnPoteDraw:hover {
+#btnStartDrawing:hover, #btnFullDraw:hover, #btnSingleDraw:hover, #btnPoteDraw:hover {
     background-color: #8E96FF;
     transition: background-color 200ms;
 }
@@ -499,6 +488,9 @@ button svg {
 
 /*Botões flutuantes*/
 @media (max-width: 768px) {
+    .actions-row {
+        display: block;
+    }
     .drawdiv {
         position: fixed;
         bottom: 20px;
@@ -506,7 +498,7 @@ button svg {
         transform: translateX(-50%); /* Centraliza horizontalmente */
         z-index: 9999;
 
-        background-color: rgba(16, 20, 22, 0.95); /* Fundo levemente transparente */
+        background-color: rgba(16, 20, 22, 0.5); /* Fundo levemente transparente */
         padding: 12px;
         border-radius: 16px;
         border: 1px solid #383F47;
@@ -515,7 +507,7 @@ button svg {
         
         display: flex;
         gap: 8px;
-        width: 90%;         /* Largura quase total da tela */
+        /*width: 90%; /* Largura quase total da tela */
         justify-content: center;
     }
     .drawdiv button {
@@ -529,8 +521,19 @@ button svg {
         margin-top: 10px;
         justify-content: center;
     }
-    body {
-        padding-bottom: 100px;
+    .btn-text {
+        display: none;
+    }
+    .btn-primary svg, .btn-secondary svg {
+        width: 24px;
+        height: 24px;
+    }
+    #btnStartDrawing {
+        padding: 24px;
+    }
+    #btnFullDraw, #btnSingleDraw, #btnPoteDraw {
+        border-radius: 48px;
+        padding: 24px;
     }
 }
 
