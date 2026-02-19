@@ -186,6 +186,7 @@ window.Sorteio.init = function() {
         resultsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    // --- FUNÇÃO PARA INICIAR ---
     const btnStart = document.getElementById('btnStartDrawing');
     const drawingActions = document.getElementById('drawingActions');
     btnStart.onclick = () => {

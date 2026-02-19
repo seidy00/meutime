@@ -479,8 +479,8 @@ button svg {
     transition: background-color 200ms;
 }
 
-#btnFullDraw:disabled, #btnSingleDraw:disabled, #btnPoteDraw:disabled {
-    background-color: #111517;
+#btnStartDrawing:disabled, #btnFullDraw:disabled, #btnSingleDraw:disabled, #btnPoteDraw:disabled {
+    background-color: #1C2125;
     color: #30363D;
     cursor: not-allowed;
     transition: background-color 200ms;
