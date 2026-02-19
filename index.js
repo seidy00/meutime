@@ -315,7 +315,7 @@ window.Sorteio.init = function() {
         State.shuffledShields = [];
         
         // 3. Destrava os botões
-        const btnSingle = document.getElementById('btnSingleDraw');
+        /*const btnSingle = document.getElementById('btnSingleDraw');
         btnSingle.innerText = "Sortear 1 Jogador";
         btnSingle.disabled = false;
 
@@ -323,7 +323,7 @@ window.Sorteio.init = function() {
         if (btnPote) {
             btnPote.innerText = "Sortear Pote";
             btnPote.disabled = false;
-        }
+        }*/
 
         alternarBloqueioConfiguracao(false); //Libera as opções (Qtd. time, Qtd. Potes e cores)
 

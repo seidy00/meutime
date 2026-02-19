@@ -430,6 +430,9 @@ button.btn-clear:disabled {
 .drawdiv, .shareresetdiv {
     display: flex;
 }
+button svg {
+    flex-shrink: 0;
+}
 @media (max-width: 768px) {
     .actions-row {
         display: flex;
@@ -450,6 +453,12 @@ button.btn-clear:disabled {
     font-weight: bold;
     cursor: pointer;
     transition: background-color 200ms;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    vertical-align: middle;
 }
 #btnFullDraw, #btnSingleDraw, #btnPoteDraw {
     background-color: #ECEDEF;
@@ -486,6 +495,43 @@ button.btn-clear:disabled {
     color: #30363D;
     cursor: not-allowed;
     transition: background-color 200ms;
+}
+
+/*Botões flutuantes*/
+@media (max-width: 768px) {
+    .drawdiv {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%); /* Centraliza horizontalmente */
+        z-index: 9999;
+
+        background-color: rgba(16, 20, 22, 0.95); /* Fundo levemente transparente */
+        padding: 12px;
+        border-radius: 16px;
+        border: 1px solid #383F47;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(8px); /* Efeito de vidro borrado */
+        
+        display: flex;
+        gap: 8px;
+        width: 90%;         /* Largura quase total da tela */
+        justify-content: center;
+    }
+    .drawdiv button {
+        flex: 1;
+        padding: 12px 8px;
+        font-size: 12px;    /* Texto menor para não quebrar linha */
+        white-space: nowrap;
+        margin: 0;
+    }
+    .shareresetdiv {
+        margin-top: 10px;
+        justify-content: center;
+    }
+    body {
+        padding-bottom: 100px;
+    }
 }
 
 /* +++++++++++++ CAMPO COM OS RESULTADOS +++++++++++++ */

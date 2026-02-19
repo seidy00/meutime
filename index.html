@@ -124,13 +124,34 @@
         <div class="Btn-container">
             <div class="actions-row">
                 <div class="drawdiv">
-                    <button id="btnFullDraw" class="btn-primary">Sortear Tudo</button>
-                    <button id="btnSingleDraw" class="btn-secondary">Sortear 1 Jogador</button>
-                    <button id="btnPoteDraw" class="btn-secondary" >Sortear Pote</button>
+                    <button id="btnFullDraw" class="btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+                        Sortear Tudo</button>
+                    <button id="btnSingleDraw" class="btn-secondary">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" stroke="none">
+                            <path d="M10,12.6c-2.7,0-5.1,1.1-6.8,2.8l1.5,2,5.4,1.7,5.4-1.7,1.5-2c-1.7-1.7-4.2-2.8-6.8-2.8Z"/>
+                            <path d="M10,20l-5.9-1.9L.5,13.1v-6.2L4.1,1.9,10,0l5.9,1.9,3.6,5v6.2l-3.6,5-5.9,1.9ZM5.1,16.7l4.9,1.6,4.9-1.6,3-4.2v-5.1l-3-4.2-4.9-1.6-4.9,1.6-3,4.2v5.1l3,4.2Z"/>
+                            <circle cx="10" cy="7.5" r="3.5"/>
+                        </svg>
+                        Sortear 1 Jogador</button>
+                    <button id="btnPoteDraw" class="btn-secondary" >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+                            <path d="M21 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3m18 0v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8m18 0H3"/></svg>
+                        Sortear Pote</button>
                 </div>
                 <div class="shareresetdiv">
-                    <button id="btnShare">Compartilhar</button>
-                    <button id="btnReset" onclick="resetarTudo()">Reiniciar Sorteio</button>
+                    <button id="btnShare">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" stroke="none">
+                            <circle cx="15" cy="3" r="3"/><circle cx="15" cy="17" r="3"/><circle cx="3" cy="10" r="3"/>
+                            <polygon points="14.6 17.7 1.4 10 14.6 2.3 15.4 3.7 4.6 10 15.4 16.3 14.6 17.7"/></svg>
+                            Compartilhar
+                        </button>
+                    <button id="btnReset" onclick="resetarTudo()">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" stroke="none">
+                            <path d="M9,18.7C4.1,18.7.1,14.7.1,9.8h1.8c0,3.9,3.2,7.1,7.1,7.1s7.1-3.2,7.1-7.1-3.2-7.1-7.1-7.1-4.8,1.3-6.1,3.4l-1.5-.9C3,2.5,5.9.9,9,.9c4.9,0,8.9,4,8.9,8.9s-4,8.9-8.9,8.9Z"/>
+                            <polygon points="7.8 6.5 1.3 6.5 1.3 0 3.1 0 3.1 4.7 7.8 4.7 7.8 6.5"/></svg>
+                        Reiniciar</button>
                 </div>
             </div>
         </div>
