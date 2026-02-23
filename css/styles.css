@@ -123,7 +123,10 @@ p {
     align-items: center;
 }
 .selected-colors {
-    padding-bottom: 2px;
+    /*background: #2C3134;*/
+    padding: 4px 8px;
+    border: 1px solid #4A56E2;
+    border-radius: 8px;
 }
 
 /* +++++++++++++ TOPO - BOTÕES POTES E TIMES +++++++++++++*/
@@ -488,14 +491,11 @@ button svg {
 
 /*Botões flutuantes*/
 @media (max-width: 768px) {
-    .actions-row {
-        display: block;
-    }
     .drawdiv {
         position: fixed;
         bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%); /* Centraliza horizontalmente */
+        left: 18%;
+        right: 18%;
         z-index: 9999;
 
         background-color: rgba(16, 20, 22, 0.5); /* Fundo levemente transparente */
@@ -507,8 +507,10 @@ button svg {
         
         display: flex;
         gap: 8px;
-        /*width: 90%; /* Largura quase total da tela */
         justify-content: center;
+
+        transition: all 0.4s ease;
+        animation: btn-animation-up 0.35s ease-out forwards;
     }
     .drawdiv button {
         flex: 1;
@@ -517,8 +519,11 @@ button svg {
         white-space: nowrap;
         margin: 0;
     }
+    .drawdiv.disable {
+        /*opacity: 0;*/
+        animation: btn-animation-down 0.25s ease-out forwards;
+    }
     .shareresetdiv {
-        margin-top: 10px;
         justify-content: center;
     }
     .btn-text {
@@ -534,6 +539,25 @@ button svg {
     #btnFullDraw, #btnSingleDraw, #btnPoteDraw {
         border-radius: 48px;
         padding: 24px;
+    }
+    #btnFullDraw:disabled, #btnSingleDraw:disabled, #btnPoteDraw:disabled {
+        display: none;
+    }
+}
+@keyframes btn-animation-up {
+    from {
+        transform: translateY(50px);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+@keyframes btn-animation-down {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(150px);
     }
 }
 

@@ -84,17 +84,19 @@ window.Sorteio.init = function() {
         document.querySelectorAll('.select-items').forEach(el => el.classList.add('hidden'));
     });
 
+    const btnStart = document.getElementById('btnStartDrawing');
+    const drawingActions = document.getElementById('drawingActions');
+    const btnFull = document.getElementById('btnFullDraw');
+    const btnSingle = document.getElementById('btnSingleDraw');
+    const btnPote = document.getElementById('btnPoteDraw');
+    const drawDiv = document.querySelector('.drawdiv');
     function atualizarEstadoBotoesSorteio() {
-        const btnStart = document.getElementById('btnStartDrawing');
-        const btnFull = document.getElementById('btnFullDraw');
-        const btnSingle = document.getElementById('btnSingleDraw');
-        const btnPote = document.getElementById('btnPoteDraw');
-        
         const coresValidas = validarCoresParaSorteio();
         let temJogadores = false;
 
         if (faseSorteio === "preparar") {
-            // Verifica se há pelo menos um nome não riscado em qualquer pote ativo
+            drawDiv.classList.remove('disable');
+            // Verifica os nomes em qualquer pote ativo
             for (let i = 1; i <= State.config.numPotes; i++) {
                 const tx = document.getElementById(`pote${i}`);
                 const nomesValidos = parsePote(tx.value).filter(n => !n.includes('OK'));
@@ -102,6 +104,7 @@ window.Sorteio.init = function() {
                     temJogadores = true;
                     break;
                 }
+            drawDiv.classList.add('disable');
             }
         } else {
             // Se já começou, os botões dependem da fila (drawQueue)
@@ -116,6 +119,7 @@ window.Sorteio.init = function() {
                 btn.disabled = !podeSortear;
                 if (!coresValidas && temJogadores) {
                     btn.title = `Selecione exatamente ${State.config.numTeams} cores`;
+                    drawDiv.classList.add('disable');
                 } else {
                     btn.title = "";
                 }
@@ -171,7 +175,7 @@ window.Sorteio.init = function() {
                     tx.style.opacity = "0.6";
                 }
             }
-
+            
             alternarBloqueioConfiguracao(true); //Bloqueia as opções (Qtd. time, Qtd. Potes e cores) durante o sorteio
             renderTeams(State.teams);
             faseSorteio = "sortear";
@@ -187,20 +191,14 @@ window.Sorteio.init = function() {
     }
 
     // --- FUNÇÃO PARA INICIAR ---
-    const btnStart = document.getElementById('btnStartDrawing');
-    const drawingActions = document.getElementById('drawingActions');
     btnStart.onclick = () => {
-        // 1. Esconde o botão de "Iniciar" e mostra os de "Sorteio"
         btnStart.style.display = 'none';
         drawingActions.style.display = 'flex';
 
-        // 2. Chama a lógica que você já tem para validar e criar os times
-        // (Geralmente a função que renderiza os cards vazios)
         garantirSorteioIniciado();
     };
 
     // --- FUNÇÃO PARA SORTEAR TUDO ---
-    const btnFull = document.getElementById('btnFullDraw');
     btnFull.onclick = () => {
         if (!garantirSorteioIniciado()) return;
 
@@ -209,6 +207,11 @@ window.Sorteio.init = function() {
             const p = State.drawQueue.shift();
             drawNextPlayer(p.name, p.pote, State.teams);
             riscarNomeNoCampo(p.name, p.pote);
+
+            if (State.drawQueue.length === 0) {
+                const drawDiv = document.querySelector('.drawdiv');
+                drawDiv.classList.add('disable'); // Adiciona disable quando termina
+            }
         }
 
         renderTeams(State.teams);
@@ -218,7 +221,6 @@ window.Sorteio.init = function() {
     };
     
     // --- FUNÇÃO PARA SORTEAR UM JOGADOR POR VEZ ---
-    const btnSingle = document.getElementById('btnSingleDraw'); // Variável de controle para saber se o sorteio individual começou
     let faseSorteio = "preparar"; // Estados: "preparar", "sortear"
     btnSingle.onclick = () => {
         if (!garantirSorteioIniciado()) return;
@@ -258,11 +260,15 @@ window.Sorteio.init = function() {
                 renderTeams(State.teams);
                 atualizarEstadoBotoesSorteio();
             }, 400);
+
+            if (State.drawQueue.length === 0) {
+                const drawDiv = document.querySelector('.drawdiv');
+                drawDiv.classList.add('disable'); // Adiciona disable quando termina
+            }
         }
     };
 
     // --- FUNÇÃO PARA SORTEAR UM POTE POR VEZ ---
-    const btnPote = document.getElementById('btnPoteDraw');
     btnPote.onclick = () => {
         if (!garantirSorteioIniciado()) return;
 
@@ -275,6 +281,11 @@ window.Sorteio.init = function() {
             const p = State.drawQueue.shift();
             drawNextPlayer(p.name, p.pote, State.teams);
             riscarNomeNoCampo(p.name, p.pote);
+
+            if (State.drawQueue.length === 0) {
+                const drawDiv = document.querySelector('.drawdiv');
+                drawDiv.classList.add('disable'); // Adiciona disable quando termina
+            }
         }
 
         renderTeams(State.teams);
@@ -377,6 +388,7 @@ window.Sorteio.init = function() {
         const resultsDots = document.getElementById('resultsDots');
         if (resultsDots) resultsDots.innerHTML = '';
 
+        drawDiv.classList.remove('disable');
         btnStart.style.display = 'inline-flex';
         drawingActions.style.display = 'none';
 
@@ -461,7 +473,7 @@ window.Sorteio.init = function() {
         // Atualiza o contador visual no label
         const labelCores = document.querySelector('.selected-colors label');
         if (labelCores) {
-            labelCores.innerText = `(${selecionadas}/${qtdTimes})`;
+            labelCores.innerText = `${selecionadas}/${qtdTimes}`;
             labelCores.style.color = selecionadas === qtdTimes ? "#28B84C" : "#FF7418";
         }
 
