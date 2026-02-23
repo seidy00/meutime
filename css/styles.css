@@ -125,8 +125,11 @@ p {
 .selected-colors {
     /*background: #2C3134;*/
     padding: 4px 8px;
-    border: 1px solid #4A56E2;
-    border-radius: 8px;
+    border: 1px solid var(--cor-status);
+    border-radius: 6px;
+}
+.selected-colors label {
+    color: var(--cor-status);
 }
 
 /* +++++++++++++ TOPO - BOTÕES POTES E TIMES +++++++++++++*/

@@ -474,7 +474,9 @@ window.Sorteio.init = function() {
         const labelCores = document.querySelector('.selected-colors label');
         if (labelCores) {
             labelCores.innerText = `${selecionadas}/${qtdTimes}`;
-            labelCores.style.color = selecionadas === qtdTimes ? "#28B84C" : "#FF7418";
+            const coresTimescheck = selecionadas === qtdTimes ? "#28B84C" : "#FF7418";
+
+            document.documentElement.style.setProperty('--cor-status', coresTimescheck);
         }
 
         colorsGrid.innerHTML = '';
