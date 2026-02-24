@@ -375,6 +375,7 @@ textarea::-webkit-scrollbar-track {
         flex: 0 0 90vw;
         min-width: 90vw;
         scroll-snap-align: center;
+        scroll-snap-stop: always;
     }
     textarea {
         font-size: 18px;
@@ -695,6 +696,7 @@ button svg {
     .team {
         flex: 0 0 100%;
         scroll-snap-align: center;
+        scroll-snap-stop: always;
     }
 
     /*Bolinhas dos carrosséis*/
