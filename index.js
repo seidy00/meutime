@@ -3,6 +3,7 @@ import { State } from "./state.js";
 import { shuffleArray, parsePote, salvarConfiguracaoNoStorage, carregarConfiguracaoDoStorage, aplicarRiscado } from "./utils.js"
 import { drawNextPlayer } from "./logic.js";
 import { renderTeams } from "./render.js";
+import { shareCurrentDraw, loadSharedDraw } from "./firebase-share.js";
 
 // Garante que o objeto Sorteio existe antes do init
 window.Sorteio = window.Sorteio || {};
@@ -89,6 +90,8 @@ window.Sorteio.init = function() {
     const btnFull = document.getElementById('btnFullDraw');
     const btnSingle = document.getElementById('btnSingleDraw');
     const btnPote = document.getElementById('btnPoteDraw');
+    const btnShare = document.getElementById('btnShare');
+
     const drawDiv = document.querySelector('.drawdiv');
     function atualizarEstadoBotoesSorteio() {
         const coresValidas = validarCoresParaSorteio();
@@ -218,6 +221,7 @@ window.Sorteio.init = function() {
         //alert("Sorteio Completo!");
         atualizarEstadoBotoesSorteio();
         scrollParaResultados();
+        window.atualizarStatusBotaoCompartilhar();
     };
     
     // --- FUNÇÃO PARA SORTEAR UM JOGADOR POR VEZ ---
@@ -266,6 +270,7 @@ window.Sorteio.init = function() {
                 drawDiv.classList.add('disable'); // Adiciona disable quando termina
             }
         }
+        window.atualizarStatusBotaoCompartilhar();
     };
 
     // --- FUNÇÃO PARA SORTEAR UM POTE POR VEZ ---
@@ -291,6 +296,7 @@ window.Sorteio.init = function() {
         renderTeams(State.teams);
         atualizarEstadoBotoesSorteio();
         scrollParaResultados();
+        window.atualizarStatusBotaoCompartilhar();
     };
 
     // FUNÇÃO PARA RISCAR OS NOMES SORTEADOS
@@ -393,6 +399,7 @@ window.Sorteio.init = function() {
         drawingActions.style.display = 'none';
 
         atualizarEstadoBotoesSorteio();
+        window.atualizarStatusBotaoCompartilhar();
         setupCarouselDots('potesContainer', 'potesDots');
         console.log("Sistema resetado. Potes liberados para edição.");
     };
@@ -587,8 +594,107 @@ window.Sorteio.init = function() {
         if (carousel) carousel.classList.toggle('layout-mode-list', State.layoutMode === 'list');
     };
 
+    // FUNÇÃO PARA CHECAR SE O SORTEIO FOI FINALIZADO
+    window.atualizarStatusBotaoCompartilhar = () => {
+    const btnShare = document.getElementById('btnShare');
+    if (!btnShare) return;
+
+    const potesIds = ['pote1', 'pote2', 'pote3', 'pote4'];
+    let aindaTemGenteParaSortear = false;
+
+    potesIds.forEach(id => {
+        const el = document.getElementById(id);
+        
+        // 1. Verifica se o elemento existe
+        if (el) {
+            // 2. Verifica se o container do pote está visível
+            // Usamos uma verificação segura para o offsetParent (se for 0, está escondido)
+            const isVisible = el.offsetParent !== null;
+
+            if (isVisible) {
+                const linhas = el.value.split('\n')
+                    .map(l => l.trim())
+                    .filter(l => l !== "");
+                
+                // Se houver qualquer linha que NÃO tenha os traços de riscado
+                if (linhas.some(l => !l.includes('×'))) {
+                    aindaTemGenteParaSortear = true;
+                }
+            }
+        }
+    });
+
+    // O botão só habilita se:
+    // - NÃO tiver ninguém pendente nos potes visíveis
+    // - Tiver times criados (State.teams)
+    const sorteioFinalizado = !aindaTemGenteParaSortear && (State.teams && State.teams.length > 0);
+
+    btnShare.disabled = !sorteioFinalizado;
+    
+    // Ajuste visual do botão
+    if (sorteioFinalizado) {
+        btnShare.style.opacity = "1";
+        btnShare.style.cursor = "pointer";
+        btnShare.classList.add('active-share'); // Opcional: para um CSS específico
+    } else {
+        btnShare.style.opacity = "0.5";
+        btnShare.style.cursor = "not-allowed";
+        btnShare.classList.remove('active-share');
+    }
+};
+    // Chame uma vez no init para ele começar bloqueado
+    window.atualizarStatusBotaoCompartilhar();
+
+    // FUNÇÃO PARA O BOTÃO COMPARTILHAR
+    btnShare.onclick = async () => {
+        if (btnShare.disabled) return;
+
+        btnShare.innerText = "Gerando link...";
+        
+        // Captura os textos dos potes para salvar
+        const potesTexto = {
+            pote1: document.getElementById('pote1').value.split('\n'),
+            pote2: document.getElementById('pote2').value.split('\n'),
+            pote3: document.getElementById('pote3').value.split('\n'),
+            pote4: document.getElementById('pote4').value.split('\n')
+        };
+
+        try {
+            const drawData = {
+                config: State.config,
+                teams: State.teams,
+                potesTexto: potesTexto,
+                timestamp: new Date().getTime()
+            };
+
+            const docRef = await window.fbAddDoc(window.fbCollection(window.fbDb, "shared_draws"), drawData);
+            const shareUrl = `${window.location.origin}${window.location.pathname}?id=${docRef.id}`;
+
+            await navigator.clipboard.writeText(shareUrl);
+            
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+
+        } catch (e) {
+            console.error("Erro: ", e);
+            alert("Erro ao gerar link.");
+        } finally {
+            btnShare.innerText = "Compartilhar";
+            window.atualizarStatusBotaoCompartilhar();
+        }
+    };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedId = urlParams.get('id');
+    if (sharedId) {
+        console.log("Detectado link compartilhado, carregando ID:", sharedId);
+        loadSharedDraw(sharedId);
+    } else {
+        carregarConfiguracaoDoStorage();
+    }
+
     setupCarouselDots('potesContainer', 'potesDots');
-    carregarConfiguracaoDoStorage();
 };
 
 // Executa o init manualmente caso o main.js falhe

@@ -96,7 +96,7 @@ export function aplicarRiscado(poteId, nomeSorteado) {
         if (!linhaLimpa) return linha;
 
         // Se já riscou um nesta rodada ou se a linha já está riscada, mantém
-        if (encontrouERiscou || linha.includes('-----')) return linha;
+        if (encontrouERiscou || linha.includes('×')) return linha;
 
         // Compara ignorando espaços extras
         if (linhaLimpa === nomeAlvo) {

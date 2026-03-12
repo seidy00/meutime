@@ -51,6 +51,23 @@ p {
     }
 }
 
+.toast-container {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background-color: #28b84c; /* Verde do Sofascore */
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+    z-index: 9999;
+}
+.toast-container.show {
+    transform: translateX(-50%) translateY(0);
+}
+
 /* +++++++++++++ TOPO - CONFIGURAÇÕES +++++++++++++ */
 .top-section {
     position: relative;
@@ -466,6 +483,7 @@ button svg {
     border: none;
     border-radius: 48px;
     color: #ECEDEF;
+    transition: all 0.3s ease;
 }
 #btnReset {
     background-color: transparent;
@@ -480,6 +498,11 @@ button svg {
 #btnShare:hover {
     background-color: #7a84ff;
     transition: background-color 200ms;
+}
+#btnShare:disabled {
+    background-color: #444 !important;
+    color: #888 !important;
+    border-color: #555 !important;
 }
 #btnReset:hover {
     background-color: #272C32;
