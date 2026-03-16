@@ -651,30 +651,42 @@ window.Sorteio.init = function() {
 
         btnShare.innerText = "Gerando link...";
         
-        // Captura os textos dos potes para salvar
-        const potesTexto = {
-            pote1: document.getElementById('pote1').value.split('\n'),
-            pote2: document.getElementById('pote2').value.split('\n'),
-            pote3: document.getElementById('pote3').value.split('\n'),
-            pote4: document.getElementById('pote4').value.split('\n')
-        };
+        // 1. CAPTURA E LIMPA OS NOMES (Remove os '×')
+        const potesTextoLimpo = {};
+        for (let i = 1; i <= 4; i++) {
+            const el = document.getElementById(`pote${i}`);
+            if (el) {
+                // Pega as linhas, tira o '×', remove os espaços em volta e ignora linhas vazias
+                potesTextoLimpo[`pote${i}`] = el.value.split('\n')
+                    .map(linha => linha.replace(/×/g, '').trim()) 
+                    .filter(linha => linha !== "");
+            }
+        }
 
         try {
+            // 2. MONTA O PACOTE COM TUDO CORRETO (Escudos e Nomes Limpos)
             const drawData = {
                 config: State.config,
                 teams: State.teams,
-                potesTexto: potesTexto,
+                shuffledShields: State.shuffledShields || State.shieldPaths, // Garante que a ordem dos escudos seja salva!
+                viewMode: State.viewMode || 'initial',
+                layoutMode: State.layoutMode || 'pitch',
+                potesTexto: potesTextoLimpo, // Usa a nossa variável limpa
                 timestamp: new Date().getTime()
             };
 
+            // 3. ENVIA PARA O FIREBASE
             const docRef = await window.fbAddDoc(window.fbCollection(window.fbDb, "shared_draws"), drawData);
             const shareUrl = `${window.location.origin}${window.location.pathname}?id=${docRef.id}`;
 
+            // 4. COPIA O LINK E MOSTRA A NOTIFICAÇÃO (TOAST)
             await navigator.clipboard.writeText(shareUrl);
             
             const toast = document.getElementById('toast');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            if (toast) {
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
 
         } catch (e) {
             console.error("Erro: ", e);
