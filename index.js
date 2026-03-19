@@ -299,40 +299,57 @@ window.Sorteio.init = function() {
         window.atualizarStatusBotaoCompartilhar();
     };
 
-    // FUNÇÃO PARA RISCAR OS NOMES SORTEADOS
-    function riscarNomeNoCampo(nome, poteNum) {
-    aplicarRiscado(`pote${poteNum}`, nome); // Chamamos apenas a função do utils que já faz todo o trabalho de procurar, limpar espaços e riscar dentro do textarea correto.
-    }
-    
-    // --- FUNÇÃO PARA CONTAR A QUANTIDADE DE JOGADORES ---
-    function configurarContadores() {
+    // FUNÇÃO PARA O BOTÃO COMPARTILHAR
+    btnShare.onclick = async () => {
+        if (btnShare.disabled) return;
+
+        btnShare.innerText = "Gerando link...";
+        
+        // 1. CAPTURA E LIMPA OS NOMES (Remove os '×')
+        const potesTextoLimpo = {};
         for (let i = 1; i <= 4; i++) {
-            const textarea = document.getElementById(`pote${i}`);
-            const counter = document.getElementById(`count-pote${i}`);
-
-            textarea.addEventListener('input', () => {
-                // Usa a sua função parsePote existente para contar nomes válidos
-                const nomes = parsePote(textarea.value);
-                const qtd = nomes.length;
-                counter.innerText = `${qtd} ${qtd === 1 ? 'Jogador' : 'Jogadores'}`;
-                
-                /*// Destaque visual se houver nomes
-                counter.style.color = qtd > 0 ? '#4CAF50' : '#888';*/
-
-                atualizarEstadoBotoesSorteio();
-            });
+            const el = document.getElementById(`pote${i}`);
+            if (el) {
+                // Pega as linhas, tira o '×', remove os espaços em volta e ignora linhas vazias
+                potesTextoLimpo[`pote${i}`] = el.value.split('\n')
+                    .map(linha => linha.replace(/×/g, '').trim()) 
+                    .filter(linha => linha !== "");
+            }
         }
-    }
-    configurarContadores();
 
-    // SALVAR AS INFORMAÇÕES DE TIMES, CORES E POTES
-    document.getElementById('numTeamsSelect').addEventListener('change', salvarConfiguracaoNoStorage);
-    document.getElementById('numPotesSelect').addEventListener('change', salvarConfiguracaoNoStorage);
+        try {
+            // 2. MONTA O PACOTE COM TUDO CORRETO (Escudos e Nomes Limpos)
+            const drawData = {
+                config: State.config,
+                teams: State.teams,
+                shuffledShields: State.shuffledShields || State.shieldPaths, // Garante que a ordem dos escudos seja salva!
+                viewMode: State.viewMode || 'initial',
+                layoutMode: State.layoutMode || 'pitch',
+                potesTexto: potesTextoLimpo, // Usa a nossa variável limpa
+                timestamp: new Date().getTime()
+            };
 
-    // EVENTO PARA SALVAR NOMES ENQUANTO O USUÁRIO DIGITA
-    for(let i=1; i<=4; i++) {
-        document.getElementById(`pote${i}`).addEventListener('input', salvarConfiguracaoNoStorage);
-    }
+            // 3. ENVIA PARA O FIREBASE
+            const docRef = await window.fbAddDoc(window.fbCollection(window.fbDb, "shared_draws"), drawData);
+            const shareUrl = `${window.location.origin}${window.location.pathname}?draw=${docRef.id}`;
+
+            // 4. COPIA O LINK E MOSTRA A NOTIFICAÇÃO (TOAST)
+            await navigator.clipboard.writeText(shareUrl);
+            
+            const toast = document.getElementById('toast');
+            if (toast) {
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+
+        } catch (e) {
+            console.error("Erro: ", e);
+            alert("Erro ao gerar link.");
+        } finally {
+            btnShare.innerText = "Compartilhar";
+            window.atualizarStatusBotaoCompartilhar();
+        }
+    };
 
     // FUNÇÃO PARA O BOTÃO RESETAR SORTEIO
     window.resetarTudo = function() {
@@ -411,6 +428,41 @@ window.Sorteio.init = function() {
         // Dispara o evento de input manualmente para zerar o contador
         textarea.dispatchEvent(new Event('input'));
     };
+
+    // FUNÇÃO PARA RISCAR OS NOMES SORTEADOS
+    function riscarNomeNoCampo(nome, poteNum) {
+    aplicarRiscado(`pote${poteNum}`, nome); // Chamamos apenas a função do utils que já faz todo o trabalho de procurar, limpar espaços e riscar dentro do textarea correto.
+    }
+    
+    // --- FUNÇÃO PARA CONTAR A QUANTIDADE DE JOGADORES ---
+    function configurarContadores() {
+        for (let i = 1; i <= 4; i++) {
+            const textarea = document.getElementById(`pote${i}`);
+            const counter = document.getElementById(`count-pote${i}`);
+
+            textarea.addEventListener('input', () => {
+                // Usa a sua função parsePote existente para contar nomes válidos
+                const nomes = parsePote(textarea.value);
+                const qtd = nomes.length;
+                counter.innerText = `${qtd} ${qtd === 1 ? 'Jogador' : 'Jogadores'}`;
+                
+                /*// Destaque visual se houver nomes
+                counter.style.color = qtd > 0 ? '#4CAF50' : '#888';*/
+
+                atualizarEstadoBotoesSorteio();
+            });
+        }
+    }
+    configurarContadores();
+
+    // SALVAR AS INFORMAÇÕES DE TIMES, CORES E POTES
+    document.getElementById('numTeamsSelect').addEventListener('change', salvarConfiguracaoNoStorage);
+    document.getElementById('numPotesSelect').addEventListener('change', salvarConfiguracaoNoStorage);
+
+    // EVENTO PARA SALVAR NOMES ENQUANTO O USUÁRIO DIGITA
+    for(let i=1; i<=4; i++) {
+        document.getElementById(`pote${i}`).addEventListener('input', salvarConfiguracaoNoStorage);
+    }
 
     // --- FUNÇÃO PARA MOSTRAR/ESCONDER POTES ---
     function renderPotesVisual(qtd) {
@@ -645,60 +697,8 @@ window.Sorteio.init = function() {
     // Chame uma vez no init para ele começar bloqueado
     window.atualizarStatusBotaoCompartilhar();
 
-    // FUNÇÃO PARA O BOTÃO COMPARTILHAR
-    btnShare.onclick = async () => {
-        if (btnShare.disabled) return;
-
-        btnShare.innerText = "Gerando link...";
-        
-        // 1. CAPTURA E LIMPA OS NOMES (Remove os '×')
-        const potesTextoLimpo = {};
-        for (let i = 1; i <= 4; i++) {
-            const el = document.getElementById(`pote${i}`);
-            if (el) {
-                // Pega as linhas, tira o '×', remove os espaços em volta e ignora linhas vazias
-                potesTextoLimpo[`pote${i}`] = el.value.split('\n')
-                    .map(linha => linha.replace(/×/g, '').trim()) 
-                    .filter(linha => linha !== "");
-            }
-        }
-
-        try {
-            // 2. MONTA O PACOTE COM TUDO CORRETO (Escudos e Nomes Limpos)
-            const drawData = {
-                config: State.config,
-                teams: State.teams,
-                shuffledShields: State.shuffledShields || State.shieldPaths, // Garante que a ordem dos escudos seja salva!
-                viewMode: State.viewMode || 'initial',
-                layoutMode: State.layoutMode || 'pitch',
-                potesTexto: potesTextoLimpo, // Usa a nossa variável limpa
-                timestamp: new Date().getTime()
-            };
-
-            // 3. ENVIA PARA O FIREBASE
-            const docRef = await window.fbAddDoc(window.fbCollection(window.fbDb, "shared_draws"), drawData);
-            const shareUrl = `${window.location.origin}${window.location.pathname}?id=${docRef.id}`;
-
-            // 4. COPIA O LINK E MOSTRA A NOTIFICAÇÃO (TOAST)
-            await navigator.clipboard.writeText(shareUrl);
-            
-            const toast = document.getElementById('toast');
-            if (toast) {
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 3000);
-            }
-
-        } catch (e) {
-            console.error("Erro: ", e);
-            alert("Erro ao gerar link.");
-        } finally {
-            btnShare.innerText = "Compartilhar";
-            window.atualizarStatusBotaoCompartilhar();
-        }
-    };
-
     const urlParams = new URLSearchParams(window.location.search);
-    const sharedId = urlParams.get('id');
+    const sharedId = urlParams.get('draw');
     if (sharedId) {
         console.log("Detectado link compartilhado, carregando ID:", sharedId);
         loadSharedDraw(sharedId);

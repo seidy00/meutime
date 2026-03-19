@@ -114,8 +114,40 @@ export async function loadSharedDraw(drawId) {
             bloquearInterfaceParaVisualizacao(data);
 
         } else {
-            alert("Sorteio não encontrado! O link pode ser inválido.");
-            window.location.href = window.location.origin + window.location.pathname;
+            // ESSE É O NOVO BLOCO 404:
+            
+            // 1. Esconde tudo que não deve aparecer
+            const configSection = document.querySelector('.top-section.bottom');
+            if (configSection) configSection.style.display = 'none';
+
+            const potesSection = document.querySelector('.potes-container');
+            if (potesSection) potesSection.style.display = 'none';
+            
+            const btnContainer = document.querySelector('.Btn-container');
+            if (btnContainer) btnContainer.style.display = 'none';
+            
+            const potesDots = document.getElementById('potesDots');
+            if (potesDots) potesDots.style.display = 'none';
+
+            // 2. Cria a interface amigável de erro na área de resultados
+            const resultsDiv = document.getElementById('resultsDiv');
+            if (resultsDiv) {
+                resultsDiv.innerHTML = `
+                    <div style="min-height: 80vh; text-align: center; padding: 60px 20px; margin-top: 20px;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#7a84ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                        <h2 style="font-size: 18px; color: #ECEDEF; margin: 24px 0 4px 0;">Sorteio não encontrado</h2>
+                        <p style="font-size: 14px; text-align: center; color: #808080; margin: 0 0 32px 0;">A página do sorteio que você procura pode estar incorreto ou ter expirado.</p>
+                        <button class="btn-return" onclick="window.location.href = window.location.origin + window.location.pathname">
+                                NOVO SORTEIO
+                        </button>
+                    </div>
+                `;
+                resultsDiv.style.display = 'block';
+            }
         }
     } catch (error) {
         console.error("Erro ao carregar sorteio:", error);

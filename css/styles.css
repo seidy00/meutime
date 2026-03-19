@@ -516,6 +516,21 @@ button svg {
     transition: background-color 200ms;
 }
 
+.btn-return {
+    background-color: #7a84ff;
+    border: none;
+    border-radius: 4px;
+    color: #101416;
+    transition: all 0.3s ease;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: bold;
+}
+.btn-return:hover {
+    background-color: #ECEDEF;
+    transition: background-color 200ms;
+}
+
 /*Botões flutuantes*/
 @media (max-width: 768px) {
     .drawdiv {
