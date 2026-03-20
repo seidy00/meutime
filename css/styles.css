@@ -142,7 +142,7 @@ p {
 .selected-colors {
     /*background: #2C3134;*/
     padding: 4px 8px;
-    border: 1px solid var(--cor-status);
+    /*border: 1px solid var(--cor-status);*/
     border-radius: 6px;
 }
 .selected-colors label {
@@ -460,9 +460,9 @@ button svg {
 
 #btnStartDrawing, #btnFullDraw, #btnSingleDraw, #btnPoteDraw, #btnShare, #btnReset {
     margin: 4px;
-    padding: 14px 24px;
+    padding: 12px 24px;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 200ms;
@@ -479,24 +479,33 @@ button svg {
     font-weight: bold;
 }
 #btnShare {
-    background-color: #4A56E2;
+    background-color: #7a84ff;
     border: none;
     border-radius: 48px;
-    color: #ECEDEF;
+    color: #101416;
     transition: all 0.3s ease;
 }
 #btnReset {
-    background-color: transparent;
+    background-color: #7a84ff;
+    border: none;
+    border-radius: 4px;
+    /*border: 1px solid #4A56E2;*/
     padding: 14px 24px;
-    border: 1px solid #4A56E2;
-    color: #858787;
+    color: #101416;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: background-color 200ms;
 }
 #btnStartDrawing:hover, #btnFullDraw:hover, #btnSingleDraw:hover, #btnPoteDraw:hover {
     background-color: #8E96FF;
     transition: background-color 200ms;
 }
 #btnShare:hover {
-    background-color: #7a84ff;
+    background-color: #ECEDEF;
     transition: background-color 200ms;
 }
 #btnShare:disabled {
@@ -505,7 +514,7 @@ button svg {
     border-color: #555 !important;
 }
 #btnReset:hover {
-    background-color: #272C32;
+    background-color: #ECEDEF;
     transition: background-color 200ms;
 }
 
@@ -513,21 +522,6 @@ button svg {
     background-color: #1C2125;
     color: #30363D;
     cursor: not-allowed;
-    transition: background-color 200ms;
-}
-
-.btn-return {
-    background-color: #7a84ff;
-    border: none;
-    border-radius: 4px;
-    color: #101416;
-    transition: all 0.3s ease;
-    padding: 12px 24px;
-    font-size: 14px;
-    font-weight: bold;
-}
-.btn-return:hover {
-    background-color: #ECEDEF;
     transition: background-color 200ms;
 }
 

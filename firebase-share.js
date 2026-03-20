@@ -134,15 +134,29 @@ export async function loadSharedDraw(drawId) {
             if (resultsDiv) {
                 resultsDiv.innerHTML = `
                     <div style="min-height: 80vh; text-align: center; padding: 60px 20px; margin-top: 20px;">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#7a84ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="15" y1="9" x2="9" y2="15"></line>
-                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        <svg width="96" height="96" viewBox="0 0 260 260">
+                        <g fill="none" fill-rule="evenodd">
+                        <defs><style>
+                            .st0 {fill: #93a7a6;}
+                            .st1 {fill: #ed4924; stroke: #ed4924; stroke-width: 1;}
+                            .st2 {fill: #f2f246;}
+                            </style>
+                        </defs>
+                            <polygon class="st2" points="204.7 66.9 158.3 134.1 125.6 115.2 97 90.9 143.8 24 174.6 49.8 204.7 66.9"/>
+                            <polygon class="st1" points="260 104.8 213.1 171.7 189.1 151.8 158.3 134.1 204.7 66.9 234.2 83.6 260 104.8"/>
+                            <polygon class="st2" points="213.1 171.7 166.6 238.1 141.4 217.3 112.3 200.7 158.3 134.1 189.1 151.8 213.1 171.7"/>
+                            <polygon class="st1" points="158.3 134.1 112.3 200.7 80 182.2 50.5 157.3 97 90.9 125.6 115.2 158.3 134.1"/>
+                            <path class="st0" d="M143.8,24l1.2-1.7,2.8-.4,5.9,4.9.4,2.6-1.4,2-8.9-7.4Z"/>
+                            <path class="st0" d="M9.1,235.8l50-71.2-8.6-7.3L0,228.9l.6,4,4.3,3.5,4.2-.6Z"/>
+                        </g>
                         </svg>
                         <h2 style="font-size: 18px; color: #ECEDEF; margin: 24px 0 4px 0;">Sorteio não encontrado</h2>
-                        <p style="font-size: 14px; text-align: center; color: #808080; margin: 0 0 32px 0;">A página do sorteio que você procura pode estar incorreto ou ter expirado.</p>
-                        <button class="btn-return" onclick="window.location.href = window.location.origin + window.location.pathname">
-                                NOVO SORTEIO
+                        <p style="font-size: 14px; text-align: center; color: #808080; margin: 0 0 32px 0;">O link da página do sorteio que você procura pode estar incorreto ou ter expirado.</p>
+                        <button id="btnReset" class="btn-return" onclick="window.location.href = window.location.origin + window.location.pathname">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+                            <path d="M19,12H5M12,19l-7-7,7-7"/>
+                        </svg>        
+                        NOVO SORTEIO
                         </button>
                     </div>
                 `;
@@ -195,10 +209,10 @@ function bloquearInterfaceParaVisualizacao(data) {
     // 4. Ajustar botão de Reiniciar para virar "Criar meu Sorteio"
     const btnReset = document.getElementById('btnReset');
     if (btnReset) {
-        btnReset.innerHTML = `
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        btnReset.innerHTML = `NOVO SORTEIO
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg> Criar meu Sorteio`;
+            </svg>`;
         btnReset.onclick = () => {
             // Remove o ID da URL e recarrega a página
             window.location.href = window.location.origin + window.location.pathname;
